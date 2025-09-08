@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Assist</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="main-wrapper">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo">
+                    <span class="logo-text">FA</span>
+                </div>
+                <h1 class="title">Farm Assist</h1>
+            </div>
+
+            <!-- Main Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Welcome to Farm Assist</h2>
+                    <p class="card-description">Get instant agricultural advice tailored for you.</p>
+                </div>
+                <div class="card-content">
+                    <!-- Language Selection -->
+                    <div class="form-group">
+                        <label for="language">Choose Language:</label>
+                        <select id="language" class="select">
+                            <option value="english">English</option>
+                            <option value="hindi">Hindi</option>
+                            <option value="bengali">Bengali</option>
+                            <option value="marathi">Marathi</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Location:</label>
+
+                        <!-- Location Method Selection -->
+                        <div class="button-group">
+                            <button id="searchBtn" class="btn btn-outline">Search Location</button>
+                            <button id="liveBtn" class="btn btn-outline">Use Live Location</button>
+                        </div>
+
+                        <!-- Location Search -->
+                        <div id="searchSection" class="location-section hidden">
+                            <div class="search-container">
+                                <div class="search-input-wrapper">
+                                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <path d="m21 21-4.35-4.35"></path>
+                                    </svg>
+                                    <input type="text" id="locationSearch" placeholder="Type to search for your location..." class="search-input">
+                                    <div id="searchLoader" class="loader hidden">
+                                        <svg class="spinner" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" opacity="0.25"></circle>
+                                            <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" opacity="0.75"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div id="suggestions" class="suggestions hidden"></div>
+                            </div>
+                        </div>
+
+                        <!-- Live Location -->
+                        <div id="liveSection" class="location-section hidden">
+                            <div id="locationStatus" class="location-status">
+                                <button id="getLocationBtn" class="btn btn-outline full-width">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    Get My Current Location
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Selected Location Display -->
+                        <div id="selectedLocation" class="selected-location hidden">
+                            <p class="location-label">Selected Location:</p>
+                            <p id="locationName" class="location-name"></p>
+                        </div>
+                    </div>
+
+                    <!-- Get Started Button -->
+                    <button id="getStartedBtn" class="btn btn-primary full-width" disabled>
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
