@@ -16,10 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Logout button action
   const logoutBtn = document.querySelector(".logout-btn")
-  logoutBtn.addEventListener("click", () => {
+  logoutBtn.addEventListener("click", (e) => {
+    e.preventDefault()
     alert("You have been logged out!")
     // redirect to login page if needed
-    window.location.href = "login.html"
+    // window.location.href = "login.html"
   })
 
   // Chat Modal Functions
@@ -33,9 +34,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const weatherDisplay = document.getElementById("weatherDisplay")
   const examplesSection = document.getElementById("examplesSection")
 
+  // Image Modal Elements
+  const imageModal = document.getElementById("imageModal")
+  const cameraSection = document.getElementById("cameraSection")
+  const cameraVideo = document.getElementById("cameraVideo")
+  const cameraCanvas = document.getElementById("cameraCanvas")
+  const fileInput = document.getElementById("fileInput")
+  const imagePreviewSection = document.getElementById("imagePreviewSection")
+  const previewImage = document.getElementById("previewImage")
+  const extractedText = document.getElementById("extractedText")
+  const imageResponseSection = document.getElementById("imageResponseSection")
+  const imageResponse = document.getElementById("imageResponse")
+
   const chatHistoryArray = []
   let hasStartedChat = false
   let isHistoryVisible = false
+  let cameraStream = null
 
   function openChatModal(mode) {
     if (mode === "audio") {
@@ -59,6 +73,143 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function closeChatModal() {
     chatModal.style.display = "none"
+  }
+
+  function openImageModal() {
+    imageModal.style.display = "block"
+    resetImageUpload()
+  }
+
+  function closeImageModal() {
+    imageModal.style.display = "none"
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop())
+      cameraStream = null
+    }
+  }
+
+  function openCamera() {
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        cameraStream = stream
+        cameraVideo.srcObject = stream
+        cameraSection.style.display = "block"
+        document.querySelector(".upload-options").style.display = "none"
+      })
+      .catch((err) => {
+        console.error("Error accessing camera:", err)
+        alert("Unable to access camera. Please check permissions or try file upload.")
+      })
+  }
+
+  function closeCameraSection() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop())
+      cameraStream = null
+    }
+    cameraSection.style.display = "none"
+    document.querySelector(".upload-options").style.display = "flex"
+  }
+
+  function captureImage() {
+    const canvas = cameraCanvas
+    const video = cameraVideo
+    const context = canvas.getContext("2d")
+
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    context.drawImage(video, 0, 0)
+
+    canvas.toBlob(
+      (blob) => {
+        const file = new File([blob], "camera-capture.jpg", { type: "image/jpeg" })
+        processImageFile(file)
+      },
+      "image/jpeg",
+      0.8,
+    )
+
+    closeCameraSection()
+  }
+
+  function openFileUpload() {
+    fileInput.click()
+  }
+
+  function handleFileUpload(event) {
+    const file = event.target.files[0]
+    if (file && file.type.startsWith("image/")) {
+      processImageFile(file)
+    } else {
+      alert("Please select a valid image file.")
+    }
+  }
+
+  function processImageFile(file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      previewImage.src = e.target.result
+      document.querySelector(".upload-options").style.display = "none"
+      imagePreviewSection.style.display = "flex"
+
+      // Simulate OCR processing
+      extractedText.textContent = "Processing image..."
+
+      // Simulate OCR delay
+      setTimeout(() => {
+        const mockOCRText = simulateOCR(file.name)
+        extractedText.textContent = mockOCRText
+      }, 2000)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  function simulateOCR(filename) {
+    // Mock OCR responses based on common farming scenarios
+    const ocrResponses = [
+      "Leaf spots visible on tomato plant. Brown circular lesions with yellow halos. Possible early blight disease.",
+      "Yellowing leaves on corn crop. Nitrogen deficiency symptoms observed. Recommend fertilizer application.",
+      "White powdery substance on cucumber leaves. Powdery mildew infection detected. Fungicide treatment needed.",
+      "Insect damage on cabbage leaves. Small holes and chewed edges. Caterpillar infestation likely.",
+      "Wilting plants in field. Soil appears dry and cracked. Irrigation required immediately.",
+      "Healthy green wheat crop. Good growth pattern observed. Continue current care routine.",
+      "Red spider mites on bean plants. Fine webbing visible. Miticide application recommended.",
+      "Fruit rot on apple tree. Brown soft spots on apples. Remove affected fruits and apply fungicide.",
+    ]
+
+    return ocrResponses[Math.floor(Math.random() * ocrResponses.length)]
+  }
+
+  function processImageText() {
+    const text = extractedText.textContent
+    if (text && text !== "Processing image...") {
+      imageResponseSection.style.display = "block"
+      imageResponse.innerHTML = '<div class="loading">Analyzing image and generating response...</div>'
+
+      // Simulate AI analysis
+      setTimeout(() => {
+        const response = generateFarmingResponse(text)
+        imageResponse.innerHTML = `<p>${response}</p>`
+
+        // Save to chat history
+        saveChatHistory(`Image Analysis: ${text.substring(0, 50)}...`, response)
+      }, 2000)
+    }
+  }
+
+  function resetImageUpload() {
+    document.querySelector(".upload-options").style.display = "flex"
+    cameraSection.style.display = "none"
+    imagePreviewSection.style.display = "none"
+    imageResponseSection.style.display = "none"
+    extractedText.textContent = "Processing image..."
+    fileInput.value = ""
+
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop())
+      cameraStream = null
+    }
   }
 
   function askExample(question) {
@@ -192,6 +343,10 @@ document.addEventListener("DOMContentLoaded", () => {
       "For soil improvement, add organic compost and maintain proper pH levels between 6.0-7.0.",
       "Use neem oil spray for organic pest control, apply early morning or evening.",
       "Harvest when 80% of grains turn golden yellow for optimal yield and quality.",
+      "Apply balanced NPK fertilizer (10:26:26) at flowering stage for better fruit development.",
+      "Ensure proper spacing between plants to prevent disease spread and improve air circulation.",
+      "Regular pruning helps in better light penetration and reduces pest infestation.",
+      "Mulching around plants helps retain moisture and suppress weed growth.",
     ]
 
     return responses[Math.floor(Math.random() * responses.length)]
@@ -324,6 +479,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target === weatherModal) {
       closeWeatherModal()
     }
+    if (event.target === imageModal) {
+      closeImageModal()
+    }
     if (event.target === document.getElementById("voiceModal")) {
       closeVoiceModal()
     }
@@ -349,17 +507,6 @@ document.addEventListener("DOMContentLoaded", () => {
       chatMain.style.width = "100%"
     }
   }
-
-  window.openChatModal = openChatModal
-  window.closeChatModal = closeChatModal
-  window.sendMessage = sendMessage
-  window.toggleHistoryList = toggleHistoryList
-  window.openWeatherModal = openWeatherModal
-  window.closeWeatherModal = closeWeatherModal
-  window.searchLocation = searchLocation
-  window.getCurrentLocation = getCurrentLocation
-  window.askExample = askExample
-  window.toggleMoreExamples = toggleMoreExamples
 
   // Voice Recognition Variables and Functions
   let recognition = null
@@ -473,19 +620,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1500)
   }
 
-  // Add voice modal functions to window object
+  // Make functions globally available
+  window.openChatModal = openChatModal
+  window.closeChatModal = closeChatModal
+  window.openImageModal = openImageModal
+  window.closeImageModal = closeImageModal
+  window.openCamera = openCamera
+  window.closeCameraSection = closeCameraSection
+  window.captureImage = captureImage
+  window.openFileUpload = openFileUpload
+  window.handleFileUpload = handleFileUpload
+  window.processImageText = processImageText
+  window.resetImageUpload = resetImageUpload
+  window.sendMessage = sendMessage
+  window.toggleHistoryList = toggleHistoryList
+  window.openWeatherModal = openWeatherModal
+  window.closeWeatherModal = closeWeatherModal
+  window.searchLocation = searchLocation
+  window.getCurrentLocation = getCurrentLocation
+  window.askExample = askExample
+  window.toggleMoreExamples = toggleMoreExamples
   window.openVoiceModal = openVoiceModal
   window.closeVoiceModal = closeVoiceModal
   window.toggleRecording = toggleRecording
 })
-
-const cards = document.querySelector(".circle-cards")
-let angle = 0
-function next() {
-  angle -= 90 // rotate by one card
-  cards.style.transform = `rotate(${angle}deg)`
-}
-function prev() {
-  angle += 90
-  cards.style.transform = `rotate(${angle}deg)`
-}
