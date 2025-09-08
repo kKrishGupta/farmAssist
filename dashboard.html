@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,28 +56,31 @@
   <div class="card">
   <i class="fas fa-keyboard fa-3x card-icon"></i> <!-- Icon -->
   <p>Type your question to get instant advice</p>
-  <button>Type Query</button>
+  <!-- Added click handler for text input -->
+  <button onclick="openChatModal('text')">Type Query</button>
   </div>
 
   <div class="card">
   <i class="fas fa-microphone fa-3x card-icon"></i>
   <p>Speak your query to get instant advice</p>
-  <button>Record Voice Query</button>
+  <!-- Added click handler for audio input -->
+  <button onclick="openChatModal('audio')">Record Voice Query</button>
   </div>
 
   <div class="card">
   <i class="fas fa-image fa-3x card-icon"></i>
   <p>Upload an image to get instant analysis</p>
-  <button>Upload Image</button>
+  <!-- Added click handler for image upload -->
+  <button onclick="openChatModal('image')">Upload Image</button>
   </div>
 </section>
-
 
 <div class="container">
   <section class="cards-grid">
     <!-- Row 1: 4 cards -->
     <div class="card"><h3>Crop Calender</h3><p>Track sowing, irrigation, and harvest schedules.</p></div>
-    <div class="card"><h3>Weather alerts</h3><p>Stay updated with real-time weather conditions for your region.</p></div>
+    <!-- Added click handler for weather card -->
+    <div class="card" onclick="openWeatherModal()"><h3>Weather alerts</h3><p>Stay updated with real-time weather conditions for your region.</p></div>
     <div class="card"><h3>Market Updates</h3><p>Check current crop prices and trends at local markets.</p></div>
     <div class="card"><h3>Community Forum</h3><p>Connect and discuss with other farmers.</p></div>
 
@@ -88,6 +89,131 @@
     <div class="card row2"><h3>Rewards & coins</h3><p>Earn points, badges, and climb the leaderboard by completing farming tasks.</p></div>
     <div class="card row2"><h3>Officer escalation</h3><p>Send complex queries directly to local agricultural officers for expert guidance.</p></div>
   </section>
+</div>
+
+<!-- Updated chatbot modal to match the reference design with language selector, microphone button, and example questions -->
+<div id="chatModal" class="modal">
+  <div class="modal-content chatbot-modal">
+    <div class="chatbot-header">
+      <h3>Farm Assist Chatbot</h3>
+      <!-- Added history list button to toggle chat history visibility -->
+      <div class="header-controls">
+        <button class="history-toggle-btn" onclick="toggleHistoryList()" title="Toggle History">
+          <i class="fas fa-list"></i>
+        </button>
+        <span class="close" onclick="closeChatModal()">&times;</span>
+      </div>
+    </div>
+    
+    <div class="chatbot-container">
+      <!-- Main chat area with new design -->
+      <div class="chat-main">
+        <!-- Examples section (shown initially) -->
+        <div class="examples-section" id="examplesSection">
+          <h4>Few examples to ask!</h4>
+          <div class="examples-grid">
+            <div class="example-card" onclick="askExample('How to improve soil condition?')">
+              How to improve soil condition?
+            </div>
+            <div class="example-card" onclick="askExample('What are the most effective methods for pest control on cabbage?')">
+              What are the most effective methods for pest control on cabbage?
+            </div>
+            <div class="example-card" onclick="askExample('What is the best time to plant okra in north india?')">
+              What is the best time to plant okra in north india?
+            </div>
+            <div class="example-card" onclick="askExample('What are the most effective methods for pest control on mango tree?')">
+              What are the most effective methods for pest control on mango tree?
+            </div>
+          </div>
+          <div class="more-examples" onclick="toggleMoreExamples()">
+            <i class="fas fa-chevron-down"></i> More Examples
+          </div>
+        </div>
+        
+        <!-- Updated chat messages area to be visible and properly styled -->
+        <div id="chatMessages" class="chat-messages">
+          <div class="bot-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">Welcome to Farm Assist! How can I help you with your farming questions?</div>
+          </div>
+        </div>
+        
+        <!-- Simplified input area to only text input, always visible -->
+        <div class="chat-input-area">
+          <div class="input-area">
+            <input type="text" id="chatInput" placeholder="Ask about crops, prices, pest control, or farming techniques..." />
+            <button onclick="sendMessage()" id="sendBtn">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Updated sidebar to be hidden by default and toggleable -->
+      <div class="chat-sidebar" id="chatSidebar" style="display: none;">
+        <h4>Chat History</h4>
+        <div id="chatHistory" class="history-list">
+          <div class="history-item">No previous chats</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Added weather modal -->
+<div id="weatherModal" class="modal">
+  <div class="modal-content weather-modal">
+    <div class="weather-header">
+      <h3>Weather Forecast</h3>
+      <span class="close" onclick="closeWeatherModal()">&times;</span>
+    </div>
+    
+    <div class="weather-container">
+      <div class="location-search">
+        <input type="text" id="locationInput" placeholder="Search location..." />
+        <button onclick="searchLocation()">Search</button>
+        <button onclick="getCurrentLocation()">Use Current Location</button>
+      </div>
+      
+      <div id="weatherDisplay" class="weather-display">
+        <!-- Weather data will be displayed here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Added voice modal for speech recognition -->
+<div id="voiceModal" class="modal">
+  <div class="modal-content voice-modal">
+    <div class="voice-header">
+      <h3>Voice Query</h3>
+      <span class="close" onclick="closeVoiceModal()">&times;</span>
+    </div>
+    
+    <div class="voice-container">
+      <div class="language-selector">
+        <span>English</span>
+      </div>
+      
+      <div class="voice-interface">
+        <div class="mic-container">
+          <button class="mic-button" id="micButton" onclick="toggleRecording()">
+            <i class="fas fa-microphone" id="micIcon"></i>
+          </button>
+          <div class="recording-status" id="recordingStatus">Tap to speak</div>
+        </div>
+        
+        <div class="voice-text-display" id="voiceTextDisplay">
+          <p>Your speech will appear here...</p>
+        </div>
+        
+        <div class="voice-response" id="voiceResponse" style="display: none;">
+          <h4>Response:</h4>
+          <div class="response-content" id="responseContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
     <script src="dashboard.js" defer></script>
