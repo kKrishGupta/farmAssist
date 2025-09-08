@@ -147,13 +147,97 @@ function closeLoginPopup() {
 }
 
 function handleLogin() {
-  alert("Redirecting to login page...")
-  window.location.href = "login.html"
+  closeLoginPopup()
+  showLoginForm()
 }
 
 function handleSignup() {
-  alert("Redirecting to signup page...")
-  window.location.href = "login.html"
+  closeLoginPopup()
+  showSignupForm()
+}
+
+function showLoginForm() {
+  const loginFormHTML = `
+    <div id="loginFormModal" class="modal">
+      <div class="modal-content login-form-content">
+        <span class="close" onclick="closeLoginForm()">&times;</span>
+        <h2>Login</h2>
+        <form class="auth-form">
+          <div class="form-group">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+          </div>
+          <button type="submit" class="auth-btn">Login</button>
+          <p class="switch-form">Don't have an account? <a href="#" onclick="switchToSignup()">Sign up</a></p>
+        </form>
+      </div>
+    </div>
+  `
+
+  document.body.insertAdjacentHTML("beforeend", loginFormHTML)
+  document.getElementById("loginFormModal").style.display = "block"
+}
+
+function showSignupForm() {
+  const signupFormHTML = `
+    <div id="signupFormModal" class="modal">
+      <div class="modal-content signup-form-content">
+        <span class="close" onclick="closeSignupForm()">&times;</span>
+        <h2>Sign Up</h2>
+        <form class="auth-form">
+          <div class="form-group">
+            <label for="signupName">Full Name:</label>
+            <input type="text" id="signupName" required>
+          </div>
+          <div class="form-group">
+            <label for="signupEmail">Email:</label>
+            <input type="email" id="signupEmail" required>
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword" required>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" required>
+          </div>
+          <button type="submit" class="auth-btn">Sign Up</button>
+          <p class="switch-form">Already have an account? <a href="#" onclick="switchToLogin()">Login</a></p>
+        </form>
+      </div>
+    </div>
+  `
+
+  document.body.insertAdjacentHTML("beforeend", signupFormHTML)
+  document.getElementById("signupFormModal").style.display = "block"
+}
+
+function closeLoginForm() {
+  const modal = document.getElementById("loginFormModal")
+  if (modal) {
+    modal.remove()
+  }
+}
+
+function closeSignupForm() {
+  const modal = document.getElementById("signupFormModal")
+  if (modal) {
+    modal.remove()
+  }
+}
+
+function switchToSignup() {
+  closeLoginForm()
+  showSignupForm()
+}
+
+function switchToLogin() {
+  closeSignupForm()
+  showLoginForm()
 }
 
 function openLearningHub() {
@@ -204,11 +288,6 @@ function closeLearningHub() {
   }
 }
 
-function openTopic(topicId) {
-  alert(`Opening ${topicId.replace("-", " ")} learning module...`)
-  // Here you would typically load the specific learning content
-}
-
 function openRewardsPopup() {
   const rewardsHTML = `
     <div id="rewardsModal" class="modal">
@@ -246,6 +325,11 @@ function closeRewardsPopup() {
   }
 }
 
+function openTopic(topicId) {
+  alert(`Opening ${topicId.replace("-", " ")} learning module...`)
+  // Here you would typically load the specific learning content
+}
+
 function shareReferral(platform) {
   const referralCode = document.querySelector(".code").textContent
   const message = `Join FarmAssist and get expert farming advice! Use my referral code: ${referralCode} and we both earn rewards! Download: https://farmassist.com`
@@ -264,6 +348,8 @@ window.onclick = (event) => {
   const loginModal = document.getElementById("loginModal")
   const learningModal = document.getElementById("learningHubModal")
   const rewardsModal = document.getElementById("rewardsModal")
+  const loginFormModal = document.getElementById("loginFormModal")
+  const signupFormModal = document.getElementById("signupFormModal")
 
   if (event.target === chatModal) {
     closeChatbox()
@@ -276,5 +362,11 @@ window.onclick = (event) => {
   }
   if (event.target === rewardsModal) {
     closeRewardsPopup()
+  }
+  if (event.target === loginFormModal) {
+    closeLoginForm()
+  }
+  if (event.target === signupFormModal) {
+    closeSignupForm()
   }
 }

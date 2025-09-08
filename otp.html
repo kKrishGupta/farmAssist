@@ -1,0 +1,138 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification - Farm Assist</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="otp.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="Farm Assist Logo">
+        </div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Smart Tools</a>
+            <a href="#">Farmer Assist</a>
+            <a href="#">Success Stories</a>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="form-box otp-form active">
+                <h2>Verify OTP</h2>
+                <p>Enter the 6-digit code sent to your mobile number</p>
+                <p class="phone-display">+91 ****<span id="phone-last-digits"></span></p>
+                
+                <div class="otp-input-group">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                </div>
+
+                <div class="timer-section">
+                    <p>Resend OTP in <span id="timer">30</span> seconds</p>
+                    <button type="button" id="resend-btn" class="resend-btn" disabled>Resend OTP</button>
+                </div>
+
+                <button type="button" id="verify-otp-btn" class="verify-btn">Verify OTP</button>
+                <button type="button" id="back-to-signup" class="back-btn">Back to Signup</button>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="image-box active">
+                <img src="farmer.png" alt="A farmer planting crops.">
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="message-box" class="message-box-container">
+        <div class="message-box-content">
+            <span class="close-btn">&times;</span>
+            <p id="message-text"></p>
+        </div>
+    </div>
+
+    <script src="otp.js"></script>
+</body>
+</html> -->
+
+
+<!-- *************** -->
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification - Farm Assist</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="otp.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="Farm Assist Logo">
+        </div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Smart Tools</a>
+            <a href="#">Farmer Assist</a>
+            <a href="#">Success Stories</a>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="form-box otp-form active">
+                <h2>Verify OTP</h2>
+                <!-- Updated text to reference email instead of mobile -->
+                <p>Enter the 6-digit code sent to your email address</p>
+                <p class="phone-display"><span id="email-display"></span></p>
+                
+                <div class="otp-input-group">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                </div>
+
+                <div class="timer-section">
+                    <p>Resend OTP in <span id="timer">30</span> seconds</p>
+                    <button type="button" id="resend-btn" class="resend-btn" disabled>Resend OTP</button>
+                </div>
+
+                <button type="button" id="verify-otp-btn" class="verify-btn">Verify OTP</button>
+                <button type="button" id="back-to-signup" class="back-btn">Back to Signup</button>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="image-box active">
+                <img src="farmer.png" alt="A farmer planting crops.">
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div id="message-box" class="message-box-container">
+        <div class="message-box-content">
+            <span class="close-btn">&times;</span>
+            <p id="message-text"></p>
+        </div>
+    </div>
+
+    <script src="otp.js"></script>
+</body>
+</html>

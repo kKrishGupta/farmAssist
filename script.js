@@ -1,6 +1,6 @@
 class FarmAssist {
   constructor() {
-    this.selectedLanguage = null // Start with null to require explicit selection
+    this.selectedLanguage = document.getElementById("language").value || null // Read initial language value from dropdown instead of starting with null
     this.selectedLocation = null
     this.locationMethod = null
     this.debounceTimer = null
@@ -293,7 +293,7 @@ class FarmAssist {
       const missing = []
       if (!this.selectedLanguage) missing.push("language")
       if (!this.selectedLocation) missing.push("location")
-      message += missing.join(" and ")
+      message += missing.join(" and ") + " before continuing."
 
       getStartedBtn.title = message
     }
@@ -303,7 +303,14 @@ class FarmAssist {
     // Prevent default anchor behavior if validation fails
     if (!this.selectedLanguage || !this.selectedLocation) {
       event.preventDefault()
-      alert("Please select both language and location before continuing.")
+
+      let message = "Please select "
+      const missing = []
+      if (!this.selectedLanguage) missing.push("language")
+      if (!this.selectedLocation) missing.push("location")
+      message += missing.join(" and ") + " before continuing."
+
+      alert(message)
       return false
     }
 
