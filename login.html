@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Assist</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="Farm Assist Logo">
+            <!-- <h1>FARM ASSIST</h1> -->
+        </div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Smart Tools</a>
+            <a href="#">Farmer Assist</a>
+            <a href="#">Success Stories</a>
+        </nav>
+        
+    </header>
+
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="form-box login-form active">
+                <h2>Login</h2>
+                <p>Access your Farm assist account</p>
+                <div class="input-group">
+                    <label for="login-username">User Name</label>
+                    <input type="text" id="login-username" placeholder="Enter Username">
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" placeholder="Password">
+                        <i class="fas fa-eye password-toggle"></i>
+                    </div>
+                </div>
+                <div class="captcha-group">
+                    <input type="checkbox" id="robot-check">
+                    <label for="robot-check">I'm not a robot</label>
+                </div>
+                <a href="#" class="forgot-link">Forgot Password</a>
+                <p>Don't have an account?</p>
+                <button type="button" class="b">Login</button>
+                <button type="button" class="form-toggle-btn signup-btn">Signup</button>
+            </div>
+
+            <div class="form-box signup-form">
+                <h2>Signup</h2>
+                <p>Create your Farm assist account</p>
+                <div class="input-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name">
+                </div>
+                <div class="input-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email">
+                </div>
+                <div class="input-group">
+                    <label for="signup-phone">Phone Number</label>
+                    <input type="tel" id="signup-phone" placeholder="Enter your phone number">
+                </div>
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="signup-password" placeholder="Create a password">
+                        <i class="fas fa-eye password-toggle"></i>
+                    </div>
+                </div>
+                <p>Already have an account?</p>
+                <button type="submit" class="submit-btn send-otp-btn">Send OTP</button>
+                <button type="button" class="form-toggle-btn login-btn">Login</button>
+            </div>
+        </div>
+
+    <div id="message-box" class="message-box-container">
+        <div class="message-box-content">
+            <span class="close-btn">&times;</span>
+            <p id="message-text"></p>
+        </div>
+    </div>
+
+        <div class="right-panel">
+            <div class="image-box active">
+                <img src="farmer.png" alt="A farmer planting crops.">
+            </div>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

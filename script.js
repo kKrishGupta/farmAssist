@@ -1,6 +1,6 @@
 class FarmAssist {
   constructor() {
-    this.selectedLanguage = "english"
+    this.selectedLanguage = null // Start with null to require explicit selection
     this.selectedLocation = null
     this.locationMethod = null
     this.debounceTimer = null
@@ -10,12 +10,14 @@ class FarmAssist {
 
   init() {
     this.bindEvents()
+    this.updateGetStartedButton() // Check initial state
   }
 
   bindEvents() {
     // Language selection
     document.getElementById("language").addEventListener("change", (e) => {
       this.selectedLanguage = e.target.value
+      this.updateGetStartedButton() // Update button state when language changes
     })
 
     // Location method buttons
@@ -38,8 +40,8 @@ class FarmAssist {
     })
 
     // Get started button
-    document.getElementById("getStartedBtn").addEventListener("click", () => {
-      this.handleGetStarted()
+    document.getElementById("getStartedBtn").addEventListener("click", (event) => {
+      this.handleGetStartedClick(event)
     })
   }
 
@@ -247,8 +249,7 @@ class FarmAssist {
     locationName.textContent = location.name
     selectedDiv.classList.remove("hidden")
 
-    // Enable get started button
-    document.getElementById("getStartedBtn").disabled = false
+    this.updateGetStartedButton()
 
     console.log("Location selected:", location)
   }
@@ -256,11 +257,7 @@ class FarmAssist {
   clearSelectedLocation() {
     this.selectedLocation = null
     document.getElementById("selectedLocation").classList.add("hidden")
-    document.getElementById("getStartedBtn").disabled = true
-
-    // Clear search input
-    document.getElementById("locationSearch").value = ""
-    this.hideSuggestions()
+    this.updateGetStartedButton() // Update button state when location is cleared
 
     // Reset live location status
     const statusDiv = document.getElementById("locationStatus")
@@ -280,13 +277,67 @@ class FarmAssist {
     })
   }
 
-  handleGetStarted() {
+  updateGetStartedButton() {
+    const getStartedBtn = document.getElementById("getStartedBtn")
+    const isValid = this.selectedLanguage && this.selectedLocation
+
+    if (isValid) {
+      getStartedBtn.classList.remove("disabled")
+      getStartedBtn.href = "home.html"
+      getStartedBtn.title = "Continue to Farm Assist"
+    } else {
+      getStartedBtn.classList.add("disabled")
+      getStartedBtn.href = "#"
+
+      let message = "Please select "
+      const missing = []
+      if (!this.selectedLanguage) missing.push("language")
+      if (!this.selectedLocation) missing.push("location")
+      message += missing.join(" and ")
+
+      getStartedBtn.title = message
+    }
+  }
+
+  handleGetStartedClick(event) {
+    // Prevent default anchor behavior if validation fails
+    if (!this.selectedLanguage || !this.selectedLocation) {
+      event.preventDefault()
+      alert("Please select both language and location before continuing.")
+      return false
+    }
+
+    // Store selections in localStorage for use on home page
+    localStorage.setItem("farmAssistLanguage", this.selectedLanguage)
+    localStorage.setItem("farmAssistLocation", JSON.stringify(this.selectedLocation))
+
     console.log("Getting started with:", {
       selectedLanguage: this.selectedLanguage,
-      selectedLocation: this.selectedLocation?.name || "No location selected",
+      selectedLocation: this.selectedLocation?.name,
     })
 
-    alert(`Welcome to Farm Assist!\nLanguage: ${this.selectedLanguage}\nLocation: ${this.selectedLocation?.name}`)
+    // Allow default anchor behavior (redirect to home.html)
+    return true
+  }
+
+  handleGetStarted() {
+    // Validate both selections before proceeding
+    if (!this.selectedLanguage || !this.selectedLocation) {
+      alert("Please select both language and location before continuing.")
+      return
+    }
+
+    console.log("Getting started with:", {
+      selectedLanguage: this.selectedLanguage,
+      selectedLocation: this.selectedLocation?.name,
+    })
+
+    // Store selections in localStorage for use on home page
+    localStorage.setItem("farmAssistLanguage", this.selectedLanguage)
+    localStorage.setItem("farmAssistLocation", JSON.stringify(this.selectedLocation))
+
+    // Navigate to home page
+    window.location.href = "home.html"
   }
 }
 

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FarmAssist - Digital Krishi Officer</title>
+  <link rel="stylesheet" href="home.css">
+  <!-- Added modal styles for chatbox and login popup -->
+  <link rel="stylesheet" href="modal-styles.css">
+</head>
+<body>
+
+  <!-- ===== HEADER / NAVBAR ===== -->
+<header>
+  <div class="container nav-container">
+    <div class="logo">
+      <img src="logo.png" alt="FarmAssist Logo" class="logo-img">
+     
+    </div>
+    <nav>
+      <a href="#features" class="nav-link">View Features</a>
+    </nav>
+  </div>
+</header>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>AI that talks Farmer.</h1>
+      <p>Expert Farming Advice Anytime, Anywhere</p>
+      <!-- Added counter that will increment from 1000 to 1200 -->
+      <p class="stats">🌾 <span id="queryCount">1000</span>+ Queries Answered</p>
+
+      <div class="hero-buttons">
+        <a href="login.html" class="btn">Login</a>
+        <a href="login.html" class="btn btn-secondary">Sign Up</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURE CARDS ===== -->
+  <section id="features" class="features">
+  <h2>Our Core Features</h2>
+  <div class="feature-cards">
+    <!-- Made cards clickable with cursor pointer and added click handlers -->
+    <div class="card ask-card"> 
+      <h3>Ask Your Question</h3>
+      <p>Get instant AI guidance for your crops.</p>
+    </div>
+    <div class="card crop-card"> 
+      <h3>Crop Calendar</h3>
+      <p>Track sowing, irrigation, and harvest schedules.</p>
+    </div>
+    <div class="card weather-card">
+      <h3>Weather Alerts</h3>
+      <p>Stay updated with real-time weather conditions for your region.</p>
+    </div>
+    <div class="card market-card"> 
+      <h3>Market Updates</h3>
+      <p>Check current crop prices and trends at local markets.</p>
+    </div>
+    <div class="card forum-card"> 
+      <h3>Community Forum</h3>
+      <p>Connect and discuss with other farmers.</p>
+    </div>
+    <div class="card learning-card"> 
+      <h3>Learning Hub</h3>
+      <p>Watch videos and take quizzes to improve skills.</p>
+    </div>
+    <div class="card rewards-card">
+      <h3>Rewards & Coins</h3>
+      <p>Earn points, badges, and climb the leaderboard by completing farming tasks.</p>
+    </div>
+    <div class="card officer-card">
+      <h3>Officer Escalation</h3>
+      <p>Send complex queries directly to local agricultural officers for expert guidance.</p>
+    </div>
+  </div>
+</section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>Empowering Farmers with AI 🌾</p>
+
+  </footer>
+<!-- Added JavaScript file for interactive functionality -->
+<script src="home.js"></script>
+</body>
+</html>

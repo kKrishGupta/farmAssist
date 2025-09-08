@@ -1,0 +1,326 @@
+/* ===== GENERAL STYLES ===== */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f0f7f4; /* pastel mint background */
+  color: #2e7d32;
+}
+
+a {
+  text-decoration: none;
+  color: #2e7d32;
+}
+
+/* ===== HEADER ===== */
+header {
+  background: #a8d5ba; /* pastel green */
+  color: #1b3b1b;
+  padding: 1rem 0;
+}
+
+/* .nav-container {
+  width: 90%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+} */
+
+/* nav a.nav-link {
+  margin-left: 1rem;
+  font-weight: bold;
+  color: #1b3b1b;
+  padding: 0.4rem 1rem;   
+  border: 2px solid #1b3b1b; 
+  border-radius: 12px;        
+  transition: all 0.3s ease;  
+  display: inline-block;
+} */
+
+/* nav a.nav-link {
+  margin-right: 50px; 
+  font-weight: bold;
+  color: #1b3b1b;
+  padding: 0.4rem 1rem;
+  border: 2px solid #1b3b1b;
+  border-radius: 12px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+
+
+nav a.nav-link:hover {
+  background: #d0f0c0;   
+  color: #034d20;       
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+  border-color: #034d20;
+} */
+
+nav a.nav-link {
+  margin-right: 50px; /* distance from logo */
+  font-weight: bold;
+  font-size: 1.2rem; /* bigger text */
+  color: #1b3b1b;
+  padding: 0.6rem 1.5rem; /* more space inside button */
+  border: 3px solid #1b3b1b; /* thicker border */
+  border-radius: 12px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+/* hover effect */
+nav a.nav-link:hover {
+  background: #d0f0c0;
+  color: #034d20;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  border-color: #034d20;
+}
+
+.nav-container {
+  width: 100%; /* full width now */
+  margin: 0; /* remove centering */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px; /* optional: small padding for nav links */
+}
+
+/* Logo styling */
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  height: 70px; /* keep header height the same */
+  width: 400px; /* make it much wider */
+  background-size: contain; /* fill width nicely */
+  display: block;
+}
+
+.login-btn {
+  border: 1px solid #1b3b1b;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  background: #d0f0c0; /* pastel button */
+  font-weight: bold;
+}
+
+.login-btn:hover {
+  background: #b6e0a8; /* darker on hover */
+}
+
+/* ===== HERO SECTION ===== */
+/* .hero {
+  background: url('image.png') center/cover no-repeat; 
+  height: 100vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #1b3b1b;
+} */
+
+/* ===== HERO SECTION ===== */
+.hero {
+  background: url("image.png") center / cover no-repeat;
+  height: 100vh;
+  display: flex;
+  justify-content: center; /* center horizontally */
+  align-items: center; /* center vertically */
+  text-align: center;
+  color: #1b3b1b;
+  padding: 0 2rem;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0; /* no extra spacing between elements */
+  margin: 0; /* remove any extra default margin */
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #034d20;
+}
+
+/* Hero Stats */
+.stats {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2e7d32; /* dark green */
+}
+
+/* Buttons inside hero */
+/* ===== HERO BUTTONS ===== */
+.hero-buttons .btn {
+  margin: 0.5rem;
+  padding: 0.8rem 2rem; /* increased padding for bigger button */
+  border-radius: 8px; /* slightly more rounded */
+  border: 1px solid #1b3b1b;
+  background: #d0f0c0;
+  color: #1b3b1b;
+  font-weight: bold;
+  font-size: 1.2rem; /* larger text */
+  display: inline-block;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.hero-buttons .btn:hover {
+  background: #b6e0a8;
+  transform: translateY(-3px);
+  box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.hero-buttons .btn-secondary {
+  background: #ffe5b4;
+  color: #7a4f24;
+  border: 1px solid #7a4f24;
+  padding: 0.8rem 2rem; /* match main button */
+  font-size: 1.2rem; /* match main button */
+  border-radius: 8px;
+}
+
+.hero-buttons .btn-secondary:hover {
+  background: #ffd39b;
+  transform: translateY(-3px);
+  box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== FEATURE CARDS ===== */
+.features {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.feature-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.card {
+  background: #fdf6f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 220px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  background: #fce1d6;
+}
+
+.feature-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* General card styling */
+.card {
+  position: relative;
+  width: 220px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-size 0.3s ease;
+}
+
+/* Overlay for blur + readability */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  z-index: 0;
+}
+
+.card h3,
+.card p {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background-size: 110%;
+}
+
+/* Individual card backgrounds */
+.ask-card {
+  background: url("images/ask.png") center / cover no-repeat;
+}
+.crop-card {
+  background: url("images/crop.png") center / cover no-repeat;
+}
+.weather-card {
+  background: url("images/weather.png") center / cover no-repeat;
+}
+.market-card {
+  background: url("images/market.png") center / cover no-repeat;
+}
+.forum-card {
+  background: url("images/forum.png") center / cover no-repeat;
+}
+.learning-card {
+  background: url("images/learn.png") center / cover no-repeat;
+}
+.rewards-card {
+  background: url("images/rewards.png") center / cover no-repeat;
+}
+.officer-card {
+  background: url("images/officer.png") center / cover no-repeat;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: #a8d5ba;
+  color: #1b3b1b;
+  text-align: center;
+  padding: 1rem;
+}
+
+footer a {
+  color: #1b3b1b;
+  margin: 0 0.5rem;
+}
+
+.nav-link {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
