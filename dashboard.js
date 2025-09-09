@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const chatHistoryArray = []
   let hasStartedChat = false
-  const isHistoryVisible = false
+  let isHistoryVisible = false
   let cameraStream = null
 
   function openChatModal(mode) {
@@ -1604,40 +1604,97 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function openLearningHub() {
     const learningHubHTML = `
-      <div id="learningHubModal" class="modal">
-        <div class="modal-content learning-hub-content">
-          <span class="close" onclick="closeLearningHub()">&times;</span>
-          <h2>🌱 Learning Hub</h2>
-          <p>Expand your farming knowledge with these topics:</p>
+    <div id="learningHubModal" class="modal">
+      <div class="modal-content learning-hub-content">
+        <div class="learning-header">
+          <h2>🌱 Learning Hub - Master Modern Farming</h2>
+          <button class="close" onclick="closeLearningHub()">&times;</button>
+        </div>
+        <div style="padding: 2rem;">
+          <div class="learning-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="stat-card" style="background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; padding: 1.5rem; border-radius: 12px; text-align: center;">
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Courses Available</h4>
+              <span style="font-size: 1.8rem; font-weight: bold; display: block;">25+</span>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #2196f3, #64b5f6); color: white; padding: 1.5rem; border-radius: 12px; text-align: center;">
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Your Progress</h4>
+              <span style="font-size: 1.8rem; font-weight: bold; display: block;">65%</span>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #ff9800, #ffb74d); color: white; padding: 1.5rem; border-radius: 12px; text-align: center;">
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Certificates Earned</h4>
+              <span style="font-size: 1.8rem; font-weight: bold; display: block;">3</span>
+            </div>
+          </div>
+          
           <div class="learning-topics">
-            <div class="topic-card" onclick="openTopic('soil-management')">
-              <h3>🌱 Soil Management</h3>
-              <p>Learn about soil health, pH levels, and nutrient management</p>
+            <div class="topic-card" onclick="openTopic('soil-management')" style="background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border: 2px solid #4caf50; position: relative; overflow: hidden;">
+              <div style="position: absolute; top: 10px; right: 10px; background: #4caf50; color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem;">85% Complete</div>
+              <h3 style="color: #2e7d32; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                🌱 Soil Management <span style="background: #4caf50; color: white; padding: 0.2rem 0.5rem; border-radius: 8px; font-size: 0.7rem;">POPULAR</span>
+              </h3>
+              <p style="color: #666; margin-bottom: 1rem;">Master soil health, pH testing, nutrient management, and organic matter enhancement</p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #4caf50; font-weight: 600; font-size: 0.9rem;">⏱️ 2.5 hours</span>
+                <button style="background: #4caf50; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Continue</button>
+              </div>
             </div>
-            <div class="topic-card" onclick="openTopic('crop-rotation')">
-              <h3>🔄 Crop Rotation</h3>
-              <p>Master the art of rotating crops for better yields</p>
+            
+            <div class="topic-card" onclick="openTopic('crop-rotation')" style="background: linear-gradient(135deg, #fff3e0, #fce4ec); border: 2px solid #ff9800;">
+              <div style="position: absolute; top: 10px; right: 10px; background: #ff9800; color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem;">NEW</div>
+              <h3 style="color: #e65100; margin-bottom: 0.5rem;">🔄 Advanced Crop Rotation</h3>
+              <p style="color: #666; margin-bottom: 1rem;">Learn 4-season rotation patterns, companion planting, and yield optimization strategies</p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #ff9800; font-weight: 600; font-size: 0.9rem;">⏱️ 3 hours</span>
+                <button style="background: #ff9800; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Start Now</button>
+              </div>
             </div>
-            <div class="topic-card" onclick="openTopic('pest-control')">
-              <h3>🐛 Pest Control</h3>
-              <p>Natural and effective pest management techniques</p>
+            
+            <div class="topic-card" onclick="openTopic('pest-control')" style="background: linear-gradient(135deg, #f3e5f5, #e8f5e9); border: 2px solid #9c27b0;">
+              <h3 style="color: #7b1fa2; margin-bottom: 0.5rem;">🐛 Integrated Pest Management</h3>
+              <p style="color: #666; margin-bottom: 1rem;">Natural pest control, beneficial insects, and eco-friendly treatment methods</p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #9c27b0; font-weight: 600; font-size: 0.9rem;">⏱️ 2 hours</span>
+                <button style="background: #9c27b0; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Start</button>
+              </div>
             </div>
-            <div class="topic-card" onclick="openTopic('irrigation')">
-              <h3>💧 Irrigation Systems</h3>
-              <p>Efficient water management and irrigation methods</p>
+            
+            <div class="topic-card" onclick="openTopic('irrigation')" style="background: linear-gradient(135deg, #e3f2fd, #e8f5e9); border: 2px solid #2196f3;">
+              <h3 style="color: #1976d2; margin-bottom: 0.5rem;">💧 Smart Irrigation Systems</h3>
+              <p style="color: #666; margin-bottom: 1rem;">Drip irrigation, sensor-based watering, and water conservation techniques</p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #2196f3; font-weight: 600; font-size: 0.9rem;">⏱️ 1.5 hours</span>
+                <button style="background: #2196f3; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Start</button>
+              </div>
             </div>
-            <div class="topic-card" onclick="openTopic('organic-farming')">
-              <h3>🌿 Organic Farming</h3>
-              <p>Sustainable and chemical-free farming practices</p>
+            
+            <div class="topic-card" onclick="openTopic('organic-farming')" style="background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border: 2px solid #4caf50;">
+              <div style="position: absolute; top: 10px; right: 10px; background: #4caf50; color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem;">TRENDING</div>
+              <h3 style="color: #2e7d32; margin-bottom: 0.5rem;">🌿 Organic Certification Course</h3>
+              <p style="color: #666; margin-bottom: 1rem;">Complete guide to organic farming practices and certification process</p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #4caf50; font-weight: 600; font-size: 0.9rem;">⏱️ 4 hours</span>
+                <button style="background: #4caf50; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Enroll</button>
+              </div>
             </div>
-            <div class="topic-card" onclick="openTopic('harvest-storage')">
-              <h3>📦 Harvest & Storage</h3>
-              <p>Proper harvesting techniques and storage methods</p>
+            
+            <div class="topic-card" onclick="openTopic('harvest-storage')" style="background: linear-gradient(135deg, #fff8e1, #f3e5f5); border: 2px solid #ffc107;">
+              <h3 style="color: #f57c00; margin-bottom: 0.5rem;">📦 Post-Harvest Management</h3>
+              <p style="color: #666; margin-bottom: 1rem;">Proper harvesting, storage techniques, and value addition methods</p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #ffc107; font-weight: 600; font-size: 0.9rem;">⏱️ 2.5 hours</span>
+                <button style="background: #ffc107; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Start</button>
+              </div>
             </div>
+          </div>
+          
+          <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border-radius: 12px;">
+            <h4 style="color: #2e7d32; margin-bottom: 1rem;">🎓 Complete courses to earn certificates and unlock premium features!</h4>
+            <button onclick="openTopic('all-courses')" style="background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);">View All Courses</button>
           </div>
         </div>
       </div>
-    `
+    </div>
+  `
 
     document.body.insertAdjacentHTML("beforeend", learningHubHTML)
     document.getElementById("learningHubModal").style.display = "block"
@@ -1652,29 +1709,92 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function openRewardsPopup() {
     const rewardsHTML = `
-      <div id="rewardsModal" class="modal">
-        <div class="modal-content rewards-content">
-          <span class="close" onclick="closeRewardsPopup()">&times;</span>
-          <h2>🎁 Rewards & Coins</h2>
-          <div class="rewards-info">
-            <h3>💰 Earn Money by Referring Friends!</h3>
-            <p>Share FarmAssist with your fellow farmers and earn rewards:</p>
-            <ul>
-              <li>🌟 ₹50 for each successful referral</li>
-              <li>🏆 Bonus ₹100 when you refer 5 friends</li>
-              <li>💎 Premium features unlock at 10 referrals</li>
-            </ul>
-            <div class="referral-code">
-              <p><strong>Your Referral Code:</strong> <span class="code">FARM${Math.floor(Math.random() * 10000)}</span></p>
+    <div id="rewardsModal" class="modal">
+      <div class="modal-content rewards-content">
+        <div class="rewards-header">
+          <h2>🎁 Rewards & Coins - Earn Real Money!</h2>
+          <button class="close" onclick="closeRewardsPopup()">&times;</button>
+        </div>
+        <div class="rewards-info">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="stat-card" style="background: linear-gradient(135deg, #ff9800, #ffb74d); color: white; padding: 1.5rem; border-radius: 12px; text-align: center;">
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Your Earnings</h4>
+              <span style="font-size: 1.8rem; font-weight: bold; display: block;">₹1,250</span>
             </div>
-            <div class="share-buttons">
-              <button onclick="shareReferral('whatsapp')" class="share-btn whatsapp">Share on WhatsApp</button>
-              <button onclick="shareReferral('copy')" class="share-btn copy">Copy Link</button>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4caf50, #66bb6a); color: white; padding: 1.5rem; border-radius: 12px; text-align: center;">
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Referrals Made</h4>
+              <span style="font-size: 1.8rem; font-weight: bold; display: block;">8</span>
             </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #2196f3, #64b5f6); color: white; padding: 1.5rem; border-radius: 12px; text-align: center;">
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; opacity: 0.9;">Coins Balance</h4>
+              <span style="font-size: 1.8rem; font-weight: bold; display: block;">2,450</span>
+            </div>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, #e8f5e9, #f1f8e9); padding: 2rem; border-radius: 15px; margin-bottom: 2rem;">
+            <h3 style="color: #2e7d32; margin-bottom: 1rem; text-align: center;">💰 Multiple Ways to Earn!</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+              <div style="background: white; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #4caf50;">
+                <h4 style="color: #2e7d32; margin-bottom: 0.5rem;">🤝 Refer Friends</h4>
+                <p style="color: #666; margin: 0; font-size: 0.9rem;">₹50 per successful referral + ₹100 bonus at 5 referrals</p>
+              </div>
+              <div style="background: white; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #ff9800;">
+                <h4 style="color: #f57c00; margin-bottom: 0.5rem;">📚 Complete Courses</h4>
+                <p style="color: #666; margin: 0; font-size: 0.9rem;">Earn 100-500 coins per completed learning module</p>
+              </div>
+              <div style="background: white; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #2196f3;">
+                <h4 style="color: #1976d2; margin-bottom: 0.5rem;">💬 Community Activity</h4>
+                <p style="color: #666; margin: 0; font-size: 0.9rem;">Get 10 coins for helpful forum posts and answers</p>
+              </div>
+              <div style="background: white; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #9c27b0;">
+                <h4 style="color: #7b1fa2; margin-bottom: 0.5rem;">📱 Daily Check-in</h4>
+                <p style="color: #666; margin: 0; font-size: 0.9rem;">25 coins daily + streak bonuses up to 100 coins</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="referral-code" style="background: linear-gradient(135deg, #f8f9fa, #e8f5e9); border: 2px solid #4caf50; border-radius: 15px; padding: 2rem; text-align: center; margin-bottom: 2rem;">
+            <h4 style="color: #2e7d32; margin-bottom: 1rem;">🔗 Your Personal Referral Code</h4>
+            <div style="background: #4caf50; color: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem; display: inline-block;">
+              <span class="code" style="font-family: monospace; font-size: 1.3rem; font-weight: bold; letter-spacing: 2px;">FARM${Math.floor(Math.random() * 10000)}</span>
+            </div>
+            <p style="color: #666; margin-bottom: 1.5rem;">Share this code with friends and family to start earning!</p>
+            
+            <div class="share-buttons" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+              <button onclick="shareReferral('whatsapp')" class="share-btn whatsapp" style="background: #25d366; color: white; border: none; padding: 1rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+                <i class="fab fa-whatsapp"></i> Share on WhatsApp
+              </button>
+              <button onclick="shareReferral('copy')" class="share-btn copy" style="background: #2196f3; color: white; border: none; padding: 1rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+                <i class="fas fa-copy"></i> Copy Link
+              </button>
+              <button onclick="shareReferral('sms')" class="share-btn sms" style="background: #ff9800; color: white; border: none; padding: 1rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+                <i class="fas fa-sms"></i> Send SMS
+              </button>
+            </div>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, #fff3e0, #fce4ec); padding: 2rem; border-radius: 15px; text-align: center;">
+            <h4 style="color: #e65100; margin-bottom: 1rem;">🏆 Unlock Premium Benefits</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+              <div style="background: white; padding: 1rem; border-radius: 8px;">
+                <h5 style="color: #ff9800; margin-bottom: 0.5rem;">10 Referrals</h5>
+                <p style="color: #666; margin: 0; font-size: 0.9rem;">Premium weather alerts</p>
+              </div>
+              <div style="background: white; padding: 1rem; border-radius: 8px;">
+                <h5 style="color: #ff9800; margin-bottom: 0.5rem;">25 Referrals</h5>
+                <p style="color: #666; margin: 0; font-size: 0.9rem;">Advanced market analytics</p>
+              </div>
+              <div style="background: white; padding: 1rem; border-radius: 8px;">
+                <h5 style="color: #ff9800; margin-bottom: 0.5rem;">50 Referrals</h5>
+                <p style="color: #666; margin: 0; font-size: 0.9rem;">Personal farming consultant</p>
+              </div>
+            </div>
+            <button onclick="openTopic('premium-benefits')" style="background: linear-gradient(135deg, #ff9800, #ffb74d); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);">View All Benefits</button>
           </div>
         </div>
       </div>
-    `
+    </div>
+  `
 
     document.body.insertAdjacentHTML("beforeend", rewardsHTML)
     document.getElementById("rewardsModal").style.display = "block"
@@ -1687,191 +1807,153 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function closeCropCalendarModal() {
+    const modal = document.getElementById("cropCalendarModal")
+    if (modal) {
+      modal.style.display = "none"
+    }
+  }
+
   function openTopic(topicId) {
-    alert(`Opening ${topicId.replace("-", " ")} learning module...`)
-    // Here you would typically load the specific learning content
+    const topics = {
+      "soil-management": {
+        title: "Soil Management",
+        content: "Learn about soil testing, pH levels, nutrient management, and organic matter improvement techniques.",
+        modules: ["Soil Testing Basics", "pH Management", "Nutrient Cycling", "Organic Matter"],
+      },
+      "pest-control": {
+        title: "Pest Control",
+        content: "Integrated pest management strategies, biological controls, and sustainable pest prevention methods.",
+        modules: ["IPM Principles", "Beneficial Insects", "Natural Pesticides", "Prevention Strategies"],
+      },
+      irrigation: {
+        title: "Irrigation Systems",
+        content: "Water management, irrigation scheduling, and efficient water use techniques for optimal crop growth.",
+        modules: ["Drip Irrigation", "Water Scheduling", "Soil Moisture", "Water Conservation"],
+      },
+    }
+
+    const topic = topics[topicId]
+    if (topic) {
+      alert(`${topic.title}\n\n${topic.content}\n\nModules: ${topic.modules.join(", ")}`)
+    }
   }
 
   function shareReferral(platform) {
-    const referralCode = document.querySelector(".code").textContent
-    const message = `Join FarmAssist and get expert farming advice! Use my referral code: ${referralCode} and we both earn rewards! Download: https://farmassist.com`
+    const referralCode = "FARM2024"
+    const message = `Join me on FarmAssist and get rewards! Use my referral code: ${referralCode}`
 
     if (platform === "whatsapp") {
       window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank")
     } else if (platform === "copy") {
       navigator.clipboard.writeText(message).then(() => {
-        alert("Referral link copied to clipboard!")
+        alert("Referral message copied to clipboard!")
       })
     }
   }
 
-  function closeLoginPopup() {
-    // Function for closing login popup if it exists
-    console.log("Login popup closed")
-  }
-
-  function closeLoginForm() {
-    // Function for closing login form if it exists
-    console.log("Login form closed")
-  }
-
-  function closeSignupForm() {
-    // Function for closing signup form if it exists
-    console.log("Signup form closed")
-  }
-
-  function closeCropCalendarModal() {
-    cropCalendarModal.style.display = "none"
-  }
-
   function showMarketTab(tabName) {
-    // Hide all market tab contents
-    document.querySelectorAll(".market-tab-content").forEach((tab) => {
-      tab.classList.remove("active")
-    })
+    const tabs = document.querySelectorAll(".market-tab")
+    const contents = document.querySelectorAll(".market-tab-content")
 
-    // Remove active class from all market tab buttons
-    document.querySelectorAll(".market-tabs .tab-btn").forEach((btn) => {
-      btn.classList.remove("active")
-    })
+    tabs.forEach((tab) => tab.classList.remove("active"))
+    contents.forEach((content) => content.classList.remove("active"))
 
-    // Show selected tab content
-    const targetTab = document.getElementById(tabName + "Tab")
-    if (targetTab) {
-      targetTab.classList.add("active")
-    }
+    const activeTab = document.querySelector(`[onclick="showMarketTab('${tabName}')"]`)
+    const activeContent = document.getElementById(`${tabName}Tab`)
 
-    // Add active class to clicked button
-    event.target.classList.add("active")
-
-    // Load specific data based on tab
-    if (tabName === "prices") {
-      loadPriceData()
-    } else if (tabName === "trends") {
-      loadTrendData()
-    } else if (tabName === "analytics") {
-      loadAnalyticsData()
-    } else if (tabName === "alerts") {
-      loadAlertsData()
-    }
+    if (activeTab) activeTab.classList.add("active")
+    if (activeContent) activeContent.classList.add("active")
   }
 
-  function loadPriceData() {
-    const priceTableBody = document.getElementById("priceTableBody")
-    if (priceTableBody) {
-      const sampleData = [
-        { crop: "Rice", price: "₹2,450", change: "+2.5%", min: "₹2,200", max: "₹2,600", volume: "1,250 tons" },
-        { crop: "Wheat", price: "₹2,125", change: "-1.2%", min: "₹2,000", max: "₹2,300", volume: "980 tons" },
-        { crop: "Tomato", price: "₹3,200", change: "+15.8%", min: "₹2,800", max: "₹3,500", volume: "450 tons" },
-        { crop: "Onion", price: "₹1,800", change: "+8.3%", min: "₹1,600", max: "₹2,000", volume: "720 tons" },
-        { crop: "Potato", price: "₹1,200", change: "-3.1%", min: "₹1,100", max: "₹1,400", volume: "890 tons" },
-      ]
-
-      priceTableBody.innerHTML = sampleData
-        .map(
-          (item) => `
-        <tr>
-          <td>${item.crop}</td>
-          <td>${item.price}</td>
-          <td class="price-change ${item.change.startsWith("+") ? "positive" : "negative"}">${item.change}</td>
-          <td>${item.min}</td>
-          <td>${item.max}</td>
-          <td>${item.volume}</td>
-          <td><button onclick="setAlert('${item.crop}')">Set Alert</button></td>
-        </tr>
-      `,
-        )
-        .join("")
-    }
+  function setAlert(crop, price) {
+    const alerts = JSON.parse(localStorage.getItem("priceAlerts") || "[]")
+    alerts.push({ crop, price, timestamp: Date.now() })
+    localStorage.setItem("priceAlerts", JSON.stringify(alerts))
+    alert(`Price alert set for ${crop} at ₹${price}/kg`)
   }
 
-  function loadTrendData() {
-    console.log("Loading trend data...")
+  function removeAlert(index) {
+    const alerts = JSON.parse(localStorage.getItem("priceAlerts") || "[]")
+    alerts.splice(index, 1)
+    localStorage.setItem("priceAlerts", JSON.stringify(alerts))
+    alert("Price alert removed")
   }
 
-  function loadAnalyticsData() {
-    console.log("Loading analytics data...")
-  }
-
-  function loadAlertsData() {
-    console.log("Loading alerts data...")
-  }
-
-  function setAlert(crop) {
-    const alertCrop = crop || document.getElementById("alertCrop")?.value
-    const alertPrice = document.getElementById("alertPrice")?.value
-    const alertType = document.getElementById("alertType")?.value
-
-    if (alertCrop && alertPrice && alertType) {
-      alert(`Price alert set for ${alertCrop} when price goes ${alertType} ₹${alertPrice}`)
-
-      // Add to active alerts
-      const activeAlerts = document.getElementById("activeAlerts")
-      if (activeAlerts) {
-        const alertDiv = document.createElement("div")
-        alertDiv.className = "alert-item"
-        alertDiv.innerHTML = `
-          <span>${alertCrop} - ${alertType} ₹${alertPrice}</span>
-          <button onclick="removeAlert(this)">Remove</button>
-        `
-        activeAlerts.appendChild(alertDiv)
+  function filterMarketData(category) {
+    const rows = document.querySelectorAll("#marketTable tbody tr")
+    rows.forEach((row) => {
+      if (category === "all" || row.dataset.category === category) {
+        row.style.display = ""
+      } else {
+        row.style.display = "none"
       }
-    } else {
-      alert("Please fill in all alert details")
-    }
-  }
-
-  function removeAlert(button) {
-    button.parentElement.remove()
-  }
-
-  function filterMarketData() {
-    const cropFilter = document.getElementById("cropFilter")?.value
-    const timeFilter = document.getElementById("timeFilter")?.value
-    console.log(`Filtering market data by crop: ${cropFilter}, time: ${timeFilter}`)
-    loadPriceData() // Reload data with filters
+    })
   }
 
   function searchMarketData() {
-    const searchTerm = document.getElementById("marketSearch")?.value
-    console.log(`Searching market data for: ${searchTerm}`)
-    loadPriceData() // Reload data with search
+    const searchTerm = document.getElementById("marketSearch").value.toLowerCase()
+    const rows = document.querySelectorAll("#marketTable tbody tr")
+
+    rows.forEach((row) => {
+      const cropName = row.cells[0].textContent.toLowerCase()
+      if (cropName.includes(searchTerm)) {
+        row.style.display = ""
+      } else {
+        row.style.display = "none"
+      }
+    })
   }
 
   function exportMarketData() {
-    alert("Market data exported successfully!")
+    const data = [
+      ["Crop", "Current Price", "Change", "Market"],
+      ["Wheat", "₹2,150/quintal", "+2.5%", "Mandi"],
+      ["Rice", "₹3,200/quintal", "-1.2%", "Wholesale"],
+      ["Corn", "₹1,850/quintal", "+0.8%", "Local"],
+      ["Sugarcane", "₹350/quintal", "+1.5%", "Mill"],
+    ]
+
+    const csvContent = data.map((row) => row.join(",")).join("\n")
+    const blob = new Blob([csvContent], { type: "text/csv" })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "market_data.csv"
+    a.click()
+    window.URL.revokeObjectURL(url)
   }
 
+  let currentPage = 1
+  const itemsPerPage = 10
+
   function nextPage() {
-    const pageInfo = document.getElementById("pageInfo")
-    if (pageInfo) {
-      // Simple pagination simulation
-      const currentPage = Number.parseInt(pageInfo.textContent.match(/\d+/)[0])
-      pageInfo.textContent = `Page ${currentPage + 1} of 50`
-    }
+    currentPage++
+    updatePagination()
   }
 
   function previousPage() {
-    const pageInfo = document.getElementById("pageInfo")
-    if (pageInfo) {
-      // Simple pagination simulation
-      const currentPage = Number.parseInt(pageInfo.textContent.match(/\d+/)[0])
-      if (currentPage > 1) {
-        pageInfo.textContent = `Page ${currentPage - 1} of 50`
-      }
+    if (currentPage > 1) {
+      currentPage--
+      updatePagination()
     }
   }
 
+  function updatePagination() {
+    document.getElementById("currentPage").textContent = currentPage
+    document.getElementById("prevBtn").disabled = currentPage === 1
+  }
+
   function searchPosts() {
-    const searchTerm = document.getElementById("forumSearch")?.value.toLowerCase()
+    const searchTerm = document.getElementById("forumSearch").value.toLowerCase()
     const posts = document.querySelectorAll(".forum-post")
 
     posts.forEach((post) => {
-      const title = post.querySelector("h4")?.textContent.toLowerCase() || ""
-      const content = post.querySelector("p")?.textContent.toLowerCase() || ""
+      const title = post.querySelector("h4").textContent.toLowerCase()
+      const content = post.querySelector("p").textContent.toLowerCase()
 
       if (title.includes(searchTerm) || content.includes(searchTerm)) {
-        post.style.display = "block"
+        post.style.display = ""
       } else {
         post.style.display = "none"
       }
@@ -1879,82 +1961,42 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function loadMorePosts() {
-    // Simulate loading more posts
-    const forumPosts = document.getElementById("forumPosts")
-    if (forumPosts) {
-      const newPost = document.createElement("div")
-      newPost.className = "forum-post"
-      newPost.setAttribute("data-category", "tips")
-      newPost.innerHTML = `
-        <div class="post-header">
-          <div class="user-info">
-            <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
-            <div>
-              <div class="username">New Farmer</div>
-              <div class="post-time">Just loaded</div>
+    const postsContainer = document.getElementById("forumPosts")
+    const newPosts = [
+      {
+        title: "Organic Fertilizer Tips",
+        author: "GreenFarmer",
+        time: "3 hours ago",
+        content: "Share your best organic fertilizer recipes and application methods.",
+        replies: 8,
+        likes: 15,
+      },
+      {
+        title: "Seasonal Crop Planning",
+        author: "CropExpert",
+        time: "5 hours ago",
+        content: "How do you plan your crop rotation for maximum yield?",
+        replies: 12,
+        likes: 23,
+      },
+    ]
+
+    newPosts.forEach((post) => {
+      const postElement = document.createElement("div")
+      postElement.className = "forum-post"
+      postElement.innerHTML = `
+            <h4>${post.title}</h4>
+            <p>${post.content}</p>
+            <div class="post-meta">
+                <span>By ${post.author} • ${post.time}</span>
+                <div class="post-actions">
+                    <span>👍 ${post.likes}</span>
+                    <span>💬 ${post.replies}</span>
+                </div>
             </div>
-          </div>
-          <span class="post-category tips">Tip</span>
-        </div>
-        <div class="post-content">
-          <h4>New farming tip loaded</h4>
-          <p>This is a dynamically loaded post to demonstrate the load more functionality.</p>
-        </div>
-        <div class="post-actions">
-          <button class="action-btn"><i class="fas fa-thumbs-up"></i> 0</button>
-          <button class="action-btn"><i class="fas fa-comment"></i> 0 replies</button>
-          <button class="action-btn"><i class="fas fa-share"></i> Share</button>
-        </div>
-      `
-      forumPosts.appendChild(newPost)
-    }
-  }
-
-  // Close modals when clicking outside
-  window.onclick = (event) => {
-    const chatModal = document.getElementById("chatModal")
-    const loginModal = document.getElementById("loginModal")
-    const learningModal = document.getElementById("learningHubModal")
-    const rewardsModal = document.getElementById("rewardsModal")
-    const loginFormModal = document.getElementById("loginFormModal")
-    const signupFormModal = document.getElementById("signupFormModal")
-
-    if (event.target === chatModal) {
-      closeChatModal()
-    }
-    if (event.target === loginModal) {
-      closeLoginPopup()
-    }
-    if (event.target === learningModal) {
-      closeLearningHub()
-    }
-    if (event.target === rewardsModal) {
-      closeRewardsPopup()
-    }
-    if (event.target === loginFormModal) {
-      closeLoginForm()
-    }
-    if (event.target === signupFormModal) {
-      closeSignupForm()
-    }
-    if (event.target === weatherModal) {
-      closeWeatherModal()
-    }
-    if (event.target === imageModal) {
-      closeImageModal()
-    }
-    if (event.target === document.getElementById("voiceModal")) {
-      closeVoiceModal()
-    }
-    if (event.target === cropCalendarModal) {
-      closeCropCalendarModal()
-    }
-    if (event.target === marketModal) {
-      closeMarketModal()
-    }
-    if (event.target === communityModal) {
-      closeCommunityModal()
-    }
+        `
+      postsContainer.appendChild(postElement)
+    })
   }
 
   // Allow Enter key to send messages
@@ -1996,6 +2038,157 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add active class to clicked button
     event.target.classList.add("active")
   }
+
+  function testAllModals() {
+    console.log("[v0] Testing all modal functionality...")
+
+    // Test basic modal functions
+    const modalTests = [
+      { name: "Chat Modal", open: "openChatModal", close: "closeChatModal", param: "text" },
+      { name: "Image Modal", open: "openImageModal", close: "closeImageModal" },
+      { name: "Weather Modal", open: "openWeatherModal", close: "closeWeatherModal" },
+      { name: "Voice Modal", open: "openVoiceModal", close: "closeVoiceModal" },
+      { name: "Crop Calendar Modal", open: "openCropCalendarModal", close: "closeCropCalendarModal" },
+      { name: "Market Modal", open: "openMarketModal", close: "closeMarketModal" },
+      { name: "Community Modal", open: "openCommunityModal", close: "closeCommunityModal" },
+      { name: "Learning Hub", open: "openLearningHub", close: "closeLearningHub" },
+      { name: "Rewards Popup", open: "openRewardsPopup", close: "closeRewardsPopup" },
+    ]
+
+    modalTests.forEach((test) => {
+      try {
+        console.log(`[v0] Testing ${test.name}...`)
+
+        // Test open function
+        if (typeof window[test.open] === "function") {
+          console.log(`[v0] ✓ ${test.open} function exists`)
+          if (test.param) {
+            window[test.open](test.param)
+          } else {
+            window[test.open]()
+          }
+          console.log(`[v0] ✓ ${test.open} executed successfully`)
+        } else {
+          console.error(`[v0] ✗ ${test.open} function missing`)
+        }
+
+        // Test close function
+        setTimeout(() => {
+          if (typeof window[test.close] === "function") {
+            console.log(`[v0] ✓ ${test.close} function exists`)
+            window[test.close]()
+            console.log(`[v0] ✓ ${test.close} executed successfully`)
+          } else {
+            console.error(`[v0] ✗ ${test.close} function missing`)
+          }
+        }, 100)
+      } catch (error) {
+        console.error(`[v0] ✗ Error testing ${test.name}:`, error)
+      }
+    })
+
+    // Test interactive functions
+    setTimeout(() => {
+      console.log("[v0] Testing interactive functions...")
+
+      const interactiveFunctions = [
+        "showMarketTab",
+        "filterMarketData",
+        "searchMarketData",
+        "exportMarketData",
+        "setAlert",
+        "removeAlert",
+        "nextPage",
+        "previousPage",
+        "searchPosts",
+        "loadMorePosts",
+        "openTopic",
+        "shareReferral",
+      ]
+
+      interactiveFunctions.forEach((funcName) => {
+        if (typeof window[funcName] === "function") {
+          console.log(`[v0] ✓ ${funcName} function exists and is accessible`)
+        } else {
+          console.error(`[v0] ✗ ${funcName} function missing or not accessible`)
+        }
+      })
+
+      console.log("[v0] Modal functionality testing completed!")
+    }, 2000)
+  }
+
+  function testOnClickHandlers() {
+    console.log("[v0] Testing onclick handlers...")
+
+    const buttonTests = [
+      { selector: '[onclick="openCropCalendarModal()"]', name: "Crop Calendar" },
+      { selector: '[onclick="openWeatherModal()"]', name: "Weather Alerts" },
+      { selector: '[onclick="openMarketModal()"]', name: "Market Updates" },
+      { selector: '[onclick="openCommunityModal()"]', name: "Community Forum" },
+      { selector: '[onclick="openLearningHub()"]', name: "Learning Hub" },
+      { selector: '[onclick="openRewardsPopup()"]', name: "Rewards & Coins" },
+    ]
+
+    buttonTests.forEach((test) => {
+      const element = document.querySelector(test.selector)
+      if (element) {
+        console.log(`[v0] ✓ ${test.name} button found with onclick handler`)
+
+        // Test if onclick attribute exists and is valid
+        const onclickAttr = element.getAttribute("onclick")
+        if (onclickAttr) {
+          console.log(`[v0] ✓ ${test.name} onclick attribute: ${onclickAttr}`)
+        } else {
+          console.error(`[v0] ✗ ${test.name} missing onclick attribute`)
+        }
+      } else {
+        console.error(`[v0] ✗ ${test.name} button not found`)
+      }
+    })
+  }
+
+  function verifyModalStates() {
+    console.log("[v0] Verifying modal states...")
+
+    const modalIds = [
+      "chatModal",
+      "imageModal",
+      "weatherModal",
+      "voiceModal",
+      "cropCalendarModal",
+      "marketModal",
+      "communityModal",
+    ]
+
+    modalIds.forEach((modalId) => {
+      const modal = document.getElementById(modalId)
+      if (modal) {
+        console.log(`[v0] ✓ ${modalId} element exists`)
+
+        // Check if modal has proper close button
+        const closeBtn = modal.querySelector(".close")
+        if (closeBtn) {
+          console.log(`[v0] ✓ ${modalId} has close button`)
+          const onclickAttr = closeBtn.getAttribute("onclick")
+          if (onclickAttr) {
+            console.log(`[v0] ✓ ${modalId} close button has onclick: ${onclickAttr}`)
+          }
+        } else {
+          console.error(`[v0] ✗ ${modalId} missing close button`)
+        }
+      } else {
+        console.error(`[v0] ✗ ${modalId} element not found`)
+      }
+    })
+  }
+
+  setTimeout(() => {
+    console.log("[v0] Starting comprehensive modal testing...")
+    testOnClickHandlers()
+    verifyModalStates()
+    testAllModals()
+  }, 1000)
 
   // Make functions globally available
   window.openChatModal = openChatModal
@@ -2051,4 +2244,8 @@ document.addEventListener("DOMContentLoaded", () => {
   window.previousPage = previousPage
   window.searchPosts = searchPosts
   window.loadMorePosts = loadMorePosts
+
+  window.testAllModals = testAllModals
+  window.testOnClickHandlers = testOnClickHandlers
+  window.verifyModalStates = verifyModalStates
 })
