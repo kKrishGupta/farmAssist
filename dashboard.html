@@ -67,14 +67,15 @@
   <div class="container">
     <section class="cards-grid">
       <!-- Row 1: 4 cards -->
-      <div class="card"><h3>Crop Calendar</h3><p>Track sowing, irrigation, and harvest schedules.</p></div>
+      <!-- Added onclick handlers for Crop Calendar, Market Updates, and Community Forum cards -->
+      <div class="card" onclick="openCropCalendarModal()"><h3>Crop Calendar</h3><p>Track sowing, irrigation, and harvest schedules.</p></div>
       <div class="card" onclick="openWeatherModal()"><h3>Weather Alerts</h3><p>Stay updated with real-time weather conditions for your region.</p></div>
-      <div class="card"><h3>Market Updates</h3><p>Check current crop prices and trends at local markets.</p></div>
-      <div class="card"><h3>Community Forum</h3><p>Connect and discuss with other farmers.</p></div>
+      <div class="card" onclick="openMarketModal()"><h3>Market Updates</h3><p>Check current crop prices and trends at local markets.</p></div>
+      <div class="card" onclick="openCommunityModal()"><h3>Community Forum</h3><p>Connect and discuss with other farmers.</p></div>
 
       <!-- Row 2: 3 cards -->
-      <div class="card row2"><h3>Learning Hub</h3><p>Watch videos and take quizzes to improve skills.</p></div>
-      <div class="card row2"><h3>Rewards & Coins</h3><p>Earn points, badges, and climb the leaderboard by completing farming tasks.</p></div>
+      <div class="card row2" onclick="openLearningHub()"><h3>Learning Hub</h3><p>Watch videos and take quizzes to improve skills.</p></div>
+      <div class="card row2" onclick="openRewardsPopup()"><h3>Rewards & Coins</h3><p>Earn points, badges, and climb the leaderboard by completing farming tasks.</p></div>
       <div class="card row2"><h3>Officer Escalation</h3><p>Send complex queries directly to local agricultural officers for expert guidance.</p></div>
     </section>
   </div>
@@ -209,7 +210,7 @@
   <div id="weatherModal" class="modal">
     <div class="modal-content weather-modal">
       <div class="weather-header">
-        <h3>Weather Forecast</h3>
+        <h3>Advanced Weather Forecast & Alerts</h3>
         <span class="close" onclick="closeWeatherModal()">&times;</span>
       </div>
       
@@ -219,9 +220,107 @@
           <button onclick="searchLocation()">Search</button>
           <button onclick="getCurrentLocation()">Use Current Location</button>
         </div>
+
+        <!-- Enhanced weather display with more detailed information -->
+        <div class="weather-tabs">
+          <button class="tab-btn active" onclick="showWeatherTab('current')">Current</button>
+          <button class="tab-btn" onclick="showWeatherTab('hourly')">Hourly</button>
+          <button class="tab-btn" onclick="showWeatherTab('weekly')">7-Day</button>
+          <button class="tab-btn" onclick="showWeatherTab('farming')">Farm Advisory</button>
+          <button class="tab-btn" onclick="showWeatherTab('alerts')">Alerts</button>
+        </div>
         
-        <div id="weatherDisplay" class="weather-display">
-          <!-- Weather data will be displayed here -->
+        <div id="currentTab" class="weather-tab-content active">
+          <div id="weatherDisplay" class="weather-display">
+            <div class="current-weather">
+              <div class="weather-main">
+                <div class="weather-icon">☀️</div>
+                <div class="temperature">27°C</div>
+                <div class="weather-desc">Sunny</div>
+                <div class="location-info">📍 Palakkad, Kerala</div>
+              </div>
+              <div class="weather-details">
+                <div class="detail-item">
+                  <span class="label">Feels like</span>
+                  <span class="value">31°C</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Humidity</span>
+                  <span class="value">68%</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Wind Speed</span>
+                  <span class="value">12 km/h</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">UV Index</span>
+                  <span class="value">8 (High)</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Visibility</span>
+                  <span class="value">10 km</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Pressure</span>
+                  <span class="value">1013 hPa</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="hourlyTab" class="weather-tab-content">
+          <div class="hourly-forecast">
+            <!-- Hourly data will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <div id="weeklyTab" class="weather-tab-content">
+          <div class="weekly-forecast">
+            <!-- Weekly data will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <div id="farmingTab" class="weather-tab-content">
+          <div class="farming-advisory">
+            <div class="advisory-card">
+              <h4>🌱 Crop Advisory</h4>
+              <p>Ideal conditions for rice transplanting. Soil moisture is optimal.</p>
+            </div>
+            <div class="advisory-card">
+              <h4>💧 Irrigation Advice</h4>
+              <p>No irrigation needed for next 2 days. Expected rainfall: 15mm</p>
+            </div>
+            <div class="advisory-card">
+              <h4>🚜 Field Work</h4>
+              <p>Good conditions for field operations. Wind speed favorable for spraying.</p>
+            </div>
+            <div class="advisory-card">
+              <h4>🐛 Pest Alert</h4>
+              <p>High humidity may increase fungal disease risk. Monitor crops closely.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="alertsTab" class="weather-tab-content">
+          <div class="weather-alerts">
+            <div class="alert-item warning">
+              <i class="fas fa-exclamation-triangle"></i>
+              <div>
+                <h4>Heavy Rain Warning</h4>
+                <p>Expected 50-75mm rainfall in next 24 hours</p>
+                <span class="alert-time">Valid until: Tomorrow 6 PM</span>
+              </div>
+            </div>
+            <div class="alert-item info">
+              <i class="fas fa-info-circle"></i>
+              <div>
+                <h4>High Temperature Alert</h4>
+                <p>Temperature may reach 38°C on Thursday</p>
+                <span class="alert-time">Valid: Day after tomorrow</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -255,6 +354,634 @@
           <div class="voice-response" id="voiceResponse" style="display: none;">
             <h4>Response:</h4>
             <div class="response-content" id="responseContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop Calendar Modal -->
+  <div id="cropCalendarModal" class="modal">
+    <div class="modal-content crop-calendar-modal">
+      <div class="crop-calendar-header">
+        <h3>Crop Calendar</h3>
+        <span class="close" onclick="closeCropCalendarModal()">&times;</span>
+      </div>
+      
+      <div class="crop-calendar-container">
+        <!-- Added search functionality and expanded crop selection -->
+        <div class="crop-search-section">
+          <div class="search-container">
+            <input type="text" id="cropSearchInput" placeholder="Search crops..." onkeyup="searchCrops()" />
+            <button onclick="searchCrops()"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        
+        <div class="crop-selection">
+          <div class="selection-group">
+            <label for="cropSelect">Select Crop:</label>
+            <select id="cropSelect" onchange="updateCropCalendar()">
+              <option value="rice">Rice (धान)</option>
+              <option value="wheat">Wheat (गेहूं)</option>
+              <option value="corn">Corn/Maize (मक्का)</option>
+              <option value="tomato">Tomato (टमाटर)</option>
+              <option value="potato">Potato (आलू)</option>
+              <option value="onion">Onion (प्याज)</option>
+              <option value="sugarcane">Sugarcane (गन्ना)</option>
+              <option value="cotton">Cotton (कपास)</option>
+              <option value="soybean">Soybean (सोयाबीन)</option>
+              <option value="groundnut">Groundnut (मूंगफली)</option>
+              <option value="mustard">Mustard (सरसों)</option>
+              <option value="chickpea">Chickpea (चना)</option>
+              <option value="lentil">Lentil (मसूर)</option>
+              <option value="pigeon-pea">Pigeon Pea (अरहर)</option>
+              <option value="barley">Barley (जौ)</option>
+              <option value="millet">Pearl Millet (बाजरा)</option>
+              <option value="sorghum">Sorghum (ज्वार)</option>
+              <option value="cabbage">Cabbage (पत्ता गोभी)</option>
+              <option value="cauliflower">Cauliflower (फूल गोभी)</option>
+              <option value="brinjal">Brinjal (बैंगन)</option>
+              <option value="okra">Okra (भिंडी)</option>
+              <option value="chili">Chili (मिर्च)</option>
+              <option value="cucumber">Cucumber (खीरा)</option>
+              <option value="watermelon">Watermelon (तरबूज)</option>
+              <option value="mango">Mango (आम)</option>
+              <option value="banana">Banana (केला)</option>
+              <option value="papaya">Papaya (पपीता)</option>
+              <option value="coconut">Coconut (नारियल)</option>
+              <option value="tea">Tea (चाय)</option>
+              <option value="coffee">Coffee (कॉफी)</option>
+            </select>
+          </div>
+          
+          <div class="selection-group">
+            <label for="seasonSelect">Select Season:</label>
+            <select id="seasonSelect" onchange="updateCropCalendar()">
+              <option value="kharif">Kharif (Monsoon - June to October)</option>
+              <option value="rabi">Rabi (Winter - November to April)</option>
+              <option value="zaid">Zaid (Summer - April to June)</option>
+              <option value="perennial">Perennial (Year Round)</option>
+            </select>
+          </div>
+          
+          <div class="selection-group">
+            <label for="regionSelect">Select Region:</label>
+            <select id="regionSelect" onchange="updateCropCalendar()">
+              <option value="north">North India</option>
+              <option value="south">South India</option>
+              <option value="west">West India</option>
+              <option value="east">East India</option>
+              <option value="central">Central India</option>
+              <option value="northeast">Northeast India</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Enhanced timeline with more detailed stages -->
+        <div class="crop-timeline">
+          <h4 id="timelineTitle">Farming Timeline for Rice - Kharif Season</h4>
+          <div class="timeline-container" id="timelineContainer">
+            <!-- Timeline will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <!-- Added comprehensive crop information section -->
+        <div class="crop-details">
+          <div class="details-tabs">
+            <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+            <button class="tab-btn" onclick="showTab('cultivation')">Cultivation</button>
+            <button class="tab-btn" onclick="showTab('diseases')">Diseases & Pests</button>
+            <button class="tab-btn" onclick="showTab('market')">Market Info</button>
+          </div>
+          
+          <div id="overviewTab" class="tab-content active">
+            <div class="crop-overview" id="cropOverview">
+              <!-- Content will be populated by JavaScript -->
+            </div>
+          </div>
+          
+          <div id="cultivationTab" class="tab-content">
+            <div class="cultivation-info" id="cultivationInfo">
+              <!-- Content will be populated by JavaScript -->
+            </div>
+          </div>
+          
+          <div id="diseasesTab" class="tab-content">
+            <div class="diseases-info" id="diseasesInfo">
+              <!-- Content will be populated by JavaScript -->
+            </div>
+          </div>
+          
+          <div id="marketTab" class="tab-content">
+            <div class="market-info" id="marketInfo">
+              <!-- Content will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="season-tips">
+          <h4>Season-Specific Tips</h4>
+          <div id="seasonTips" class="tips-content">
+            <!-- Tips will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Market Updates Modal -->
+  <div id="marketModal" class="modal">
+    <div class="modal-content market-modal">
+      <div class="market-header">
+        <h3>Market Updates & Price Analytics</h3>
+        <span class="close" onclick="closeMarketModal()">&times;</span>
+      </div>
+      
+      <div class="market-container">
+        <div class="market-controls">
+          <div class="location-selector">
+            <label for="marketLocation">Market Location:</label>
+            <select id="marketLocation" onchange="updateMarketPrices()">
+              <option value="palakkad">Palakkad</option>
+              <option value="coimbatore">Coimbatore</option>
+              <option value="bangalore">Bangalore</option>
+              <option value="chennai">Chennai</option>
+              <option value="kochi">Kochi</option>
+              <option value="delhi">Delhi</option>
+              <option value="mumbai">Mumbai</option>
+              <option value="pune">Pune</option>
+              <option value="hyderabad">Hyderabad</option>
+              <option value="kolkata">Kolkata</option>
+            </select>
+          </div>
+          <div class="market-filters">
+            <select id="cropFilter" onchange="filterMarketData()">
+              <option value="all">All Crops</option>
+              <option value="cereals">Cereals</option>
+              <option value="vegetables">Vegetables</option>
+              <option value="fruits">Fruits</option>
+              <option value="pulses">Pulses</option>
+              <option value="spices">Spices</option>
+            </select>
+            <select id="timeFilter" onchange="filterMarketData()">
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+            </select>
+          </div>
+          <button class="refresh-btn" onclick="refreshMarketData()">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+
+        <!-- Enhanced market data display with search and pagination -->
+        <div class="market-search">
+          <input type="text" id="marketSearch" placeholder="Search crops..." onkeyup="searchMarketData()">
+          <button onclick="exportMarketData()"><i class="fas fa-download"></i> Export</button>
+        </div>
+        
+        <div class="market-stats">
+          <div class="stat-card">
+            <h4>Total Markets</h4>
+            <span id="totalMarkets">1,247</span>
+          </div>
+          <div class="stat-card">
+            <h4>Active Traders</h4>
+            <span id="activeTraders">8,934</span>
+          </div>
+          <div class="stat-card">
+            <h4>Daily Volume</h4>
+            <span id="dailyVolume">₹45.2 Cr</span>
+          </div>
+          <div class="stat-card">
+            <h4>Price Alerts</h4>
+            <span id="priceAlerts">23</span>
+          </div>
+        </div>
+
+        <div class="market-tabs">
+          <button class="tab-btn active" onclick="showMarketTab('prices')">Live Prices</button>
+          <button class="tab-btn" onclick="showMarketTab('trends')">Price Trends</button>
+          <button class="tab-btn" onclick="showMarketTab('analytics')">Analytics</button>
+          <button class="tab-btn" onclick="showMarketTab('alerts')">Price Alerts</button>
+        </div>
+
+        <div id="pricesTab" class="market-tab-content active">
+          <div class="price-table-container">
+            <table id="priceTable" class="price-table">
+              <thead>
+                <tr>
+                  <th>Crop</th>
+                  <th>Current Price</th>
+                  <th>Change</th>
+                  <th>Min Price</th>
+                  <th>Max Price</th>
+                  <th>Volume</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="priceTableBody">
+                <!-- Data will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <button onclick="previousPage()" id="prevBtn">Previous</button>
+            <span id="pageInfo">Page 1 of 50</span>
+            <button onclick="nextPage()" id="nextBtn">Next</button>
+          </div>
+        </div>
+
+        <div id="trendsTab" class="market-tab-content">
+          <div class="chart-container">
+            <canvas id="priceChart" width="800" height="400"></canvas>
+          </div>
+          <div class="trend-controls">
+            <select id="trendCrop" onchange="updateTrendChart()">
+              <option value="rice">Rice</option>
+              <option value="wheat">Wheat</option>
+              <option value="tomato">Tomato</option>
+              <option value="onion">Onion</option>
+            </select>
+            <select id="trendPeriod" onchange="updateTrendChart()">
+              <option value="7d">7 Days</option>
+              <option value="30d">30 Days</option>
+              <option value="90d">90 Days</option>
+              <option value="1y">1 Year</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="analyticsTab" class="market-tab-content">
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <h4>Market Volatility</h4>
+              <div class="volatility-meter">
+                <div class="meter-bar">
+                  <div class="meter-fill" style="width: 65%"></div>
+                </div>
+                <span>Moderate (65%)</span>
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h4>Seasonal Forecast</h4>
+              <div class="forecast-list">
+                <div class="forecast-item">
+                  <span>Rice</span>
+                  <span class="trend up">↗ +12%</span>
+                </div>
+                <div class="forecast-item">
+                  <span>Wheat</span>
+                  <span class="trend down">↘ -5%</span>
+                </div>
+                <div class="forecast-item">
+                  <span>Tomato</span>
+                  <span class="trend up">↗ +8%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="alertsTab" class="market-tab-content">
+          <div class="alerts-section">
+            <div class="alert-form">
+              <h4>Set Price Alert</h4>
+              <div class="form-row">
+                <select id="alertCrop">
+                  <option value="rice">Rice</option>
+                  <option value="wheat">Wheat</option>
+                  <option value="tomato">Tomato</option>
+                </select>
+                <input type="number" id="alertPrice" placeholder="Target Price">
+                <select id="alertType">
+                  <option value="above">Above</option>
+                  <option value="below">Below</option>
+                </select>
+                <button onclick="setAlert()">Set Alert</button>
+              </div>
+            </div>
+            <div class="active-alerts" id="activeAlerts">
+              <!-- Alerts will be populated here -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="market-insights">
+          <h4>Market Insights & News</h4>
+          <div class="insights-content">
+            <div class="insight-item">
+              <i class="fas fa-chart-line"></i>
+              <p><strong>Tomato prices surging</strong> - 15% increase due to supply shortage from Karnataka</p>
+              <span class="time">2 hours ago</span>
+            </div>
+            <div class="insight-item">
+              <i class="fas fa-cloud-rain"></i>
+              <p><strong>Monsoon impact</strong> - Rice prices expected to stabilize next week</p>
+              <span class="time">4 hours ago</span>
+            </div>
+            <div class="insight-item">
+              <i class="fas fa-truck"></i>
+              <p><strong>Transportation costs</strong> - Fuel price hike affecting logistics</p>
+              <span class="time">6 hours ago</span>
+            </div>
+            <div class="insight-item">
+              <i class="fas fa-globe"></i>
+              <p><strong>Export opportunities</strong> - High demand for Indian wheat in Middle East</p>
+              <span class="time">8 hours ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Community Forum Modal -->
+  <div id="communityModal" class="modal">
+    <div class="modal-content community-modal">
+      <div class="community-header">
+        <h3>Community Forum & Farmer Network</h3>
+        <span class="close" onclick="closeCommunityModal()">&times;</span>
+      </div>
+      
+      <div class="community-container">
+        <div class="forum-controls">
+          <div class="category-filters">
+            <button class="category-btn active" onclick="filterPosts('all')">All Posts</button>
+            <button class="category-btn" onclick="filterPosts('questions')">Questions</button>
+            <button class="category-btn" onclick="filterPosts('tips')">Tips & Advice</button>
+            <button class="category-btn" onclick="filterPosts('market')">Market Discussion</button>
+            <button class="category-btn" onclick="filterPosts('weather')">Weather Updates</button>
+            <button class="category-btn" onclick="filterPosts('technology')">Farm Tech</button>
+            <button class="category-btn" onclick="filterPosts('success')">Success Stories</button>
+          </div>
+          <div class="forum-actions">
+            <input type="text" id="forumSearch" placeholder="Search discussions..." onkeyup="searchPosts()">
+            <button class="new-post-btn" onclick="showNewPostForm()">
+              <i class="fas fa-plus"></i> New Post
+            </button>
+          </div>
+        </div>
+
+        <!-- Enhanced community stats and leaderboard -->
+        <div class="community-stats">
+          <div class="stat-item">
+            <i class="fas fa-users"></i>
+            <div>
+              <span class="stat-number">12,847</span>
+              <span class="stat-label">Active Farmers</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-comments"></i>
+            <div>
+              <span class="stat-number">3,456</span>
+              <span class="stat-label">Discussions</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+              <span class="stat-number">8,923</span>
+              <span class="stat-label">Solutions Shared</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-trophy"></i>
+            <div>
+              <span class="stat-number">1,234</span>
+              <span class="stat-label">Expert Contributors</span>
+            </div>
+          </div>
+        </div>
+        
+        <div id="newPostForm" class="new-post-form" style="display: none;">
+          <h4>Share with the Community</h4>
+          <input type="text" id="postTitle" placeholder="What's your question or topic?" />
+          <textarea id="postContent" placeholder="Share your thoughts, questions, experiences, or tips with fellow farmers..."></textarea>
+          <div class="post-options">
+            <div class="form-group">
+              <label>Category:</label>
+              <select id="postCategory">
+                <option value="questions">Question</option>
+                <option value="tips">Tip & Advice</option>
+                <option value="market">Market Discussion</option>
+                <option value="weather">Weather Update</option>
+                <option value="technology">Farm Technology</option>
+                <option value="success">Success Story</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tags:</label>
+              <input type="text" id="postTags" placeholder="e.g., organic, pest-control, irrigation">
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="anonymousPost"> Post anonymously
+              </label>
+            </div>
+          </div>
+          <div class="form-controls">
+            <div class="form-buttons">
+              <button onclick="cancelPost()">Cancel</button>
+              <button onclick="submitPost()" class="submit-btn">Share Post</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="forum-sidebar">
+          <div class="trending-topics">
+            <h4>Trending Topics</h4>
+            <div class="topic-list">
+              <div class="topic-item">#OrganicFarming</div>
+              <div class="topic-item">#DroughtManagement</div>
+              <div class="topic-item">#SoilHealth</div>
+              <div class="topic-item">#CropRotation</div>
+              <div class="topic-item">#PestControl</div>
+            </div>
+          </div>
+          
+          <div class="expert-farmers">
+            <h4>Expert Farmers</h4>
+            <div class="expert-list">
+              <div class="expert-item">
+                <img src="/placeholder.svg?height=30&width=30" alt="Expert">
+                <div>
+                  <div class="expert-name">Dr. Rajesh Kumar</div>
+                  <div class="expert-specialty">Organic Farming</div>
+                </div>
+                <div class="expert-badge">🏆</div>
+              </div>
+              <div class="expert-item">
+                <img src="/placeholder.svg?height=30&width=30" alt="Expert">
+                <div>
+                  <div class="expert-name">Priya Sharma</div>
+                  <div class="expert-specialty">Soil Management</div>
+                </div>
+                <div class="expert-badge">🌟</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div id="forumPosts" class="forum-posts">
+          <!-- Enhanced forum posts with more interactive features -->
+          <div class="forum-post featured" data-category="tips">
+            <div class="post-header">
+              <div class="user-info">
+                <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+                <div>
+                  <div class="username">Suresh Kumar <span class="verified">✓</span></div>
+                  <div class="user-details">Organic Farmer • 15 years experience</div>
+                  <div class="post-time">2 hours ago • Palakkad, Kerala</div>
+                </div>
+              </div>
+              <div class="post-badges">
+                <span class="post-category tips">Expert Tip</span>
+                <span class="featured-badge">Featured</span>
+              </div>
+            </div>
+            <div class="post-content">
+              <h4>Revolutionary Natural Pest Control Method - 90% Success Rate!</h4>
+              <p>After 15 years of experimenting, I've developed a natural pest control solution that's given me 90% pest reduction. Here's the complete recipe and application method...</p>
+              <div class="post-tags">
+                <span class="tag">#PestControl</span>
+                <span class="tag">#Organic</span>
+                <span class="tag">#Natural</span>
+              </div>
+              <div class="post-media">
+                <img src="/placeholder.svg?height=200&width=300" alt="Pest control method">
+              </div>
+            </div>
+            <div class="post-actions">
+              <button class="action-btn liked"><i class="fas fa-thumbs-up"></i> 247</button>
+              <button class="action-btn"><i class="fas fa-comment"></i> 89 replies</button>
+              <button class="action-btn"><i class="fas fa-share"></i> Share</button>
+              <button class="action-btn"><i class="fas fa-bookmark"></i> Save</button>
+            </div>
+          </div>
+
+          <!-- More enhanced posts -->
+          <div class="forum-post" data-category="questions">
+            <div class="post-header">
+              <div class="user-info">
+                <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+                <div>
+                  <div class="username">Anita Patel</div>
+                  <div class="user-details">New Farmer • Gujarat</div>
+                  <div class="post-time">4 hours ago</div>
+                </div>
+              </div>
+              <span class="post-category questions">Question</span>
+            </div>
+            <div class="post-content">
+              <h4>Soil pH testing - Need urgent help!</h4>
+              <p>My tomato plants are showing yellowing leaves. I suspect soil pH issues. Can someone guide me on how to test and correct soil pH? Budget is limited.</p>
+              <div class="post-tags">
+                <span class="tag">#SoilTesting</span>
+                <span class="tag">#Tomato</span>
+                <span class="tag">#Help</span>
+              </div>
+            </div>
+            <div class="post-actions">
+              <button class="action-btn"><i class="fas fa-thumbs-up"></i> 34</button>
+              <button class="action-btn"><i class="fas fa-comment"></i> 12 replies</button>
+              <button class="action-btn"><i class="fas fa-share"></i> Share</button>
+              <button class="action-btn"><i class="fas fa-bookmark"></i> Save</button>
+            </div>
+          </div>
+
+          <div class="forum-post" data-category="success">
+            <div class="post-header">
+              <div class="user-info">
+                <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+                <div>
+                  <div class="username">Ramesh Singh <span class="verified">✓</span></div>
+                  <div class="user-details">Progressive Farmer • Punjab</div>
+                  <div class="post-time">1 day ago</div>
+                </div>
+              </div>
+              <span class="post-category success">Success Story</span>
+            </div>
+            <div class="post-content">
+              <h4>From ₹50K to ₹5 Lakh annual income using smart farming!</h4>
+              <p>Sharing my 3-year journey of transforming my 2-acre farm using drip irrigation, crop rotation, and direct marketing. Complete breakdown of costs and profits included.</p>
+              <div class="post-tags">
+                <span class="tag">#SmartFarming</span>
+                <span class="tag">#Success</span>
+                <span class="tag">#Profit</span>
+              </div>
+            </div>
+            <div class="post-actions">
+              <button class="action-btn"><i class="fas fa-thumbs-up"></i> 156</button>
+              <button class="action-btn"><i class="fas fa-comment"></i> 43 replies</button>
+              <button class="action-btn"><i class="fas fa-share"></i> Share</button>
+              <button class="action-btn"><i class="fas fa-bookmark"></i> Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="load-more">
+          <button onclick="loadMorePosts()">Load More Posts</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Learning Hub Modal -->
+  <div id="learningHubModal" class="modal">
+    <div class="modal-content learning-hub-modal">
+      <div class="learning-hub-header">
+        <h3>Learning Hub</h3>
+        <span class="close" onclick="closeLearningHubModal()">&times;</span>
+      </div>
+      
+      <div class="learning-hub-container">
+        <div class="video-section">
+          <h4>Watch Videos</h4>
+          <div class="video-grid">
+            <!-- Videos will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <div class="quiz-section">
+          <h4>Take Quizzes</h4>
+          <div class="quiz-grid">
+            <!-- Quizzes will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rewards & Coins Modal -->
+  <div id="rewardsPopupModal" class="modal">
+    <div class="modal-content rewards-popup-modal">
+      <div class="rewards-popup-header">
+        <h3>Rewards & Coins</h3>
+        <span class="close" onclick="closeRewardsPopupModal()">&times;</span>
+      </div>
+      
+      <div class="rewards-popup-container">
+        <div class="points-section">
+          <h4>Points Earned</h4>
+          <div class="points-display">
+            <span id="pointsDisplay">120</span>
+          </div>
+        </div>
+        
+        <div class="badges-section">
+          <h4>Badges</h4>
+          <div class="badges-grid">
+            <!-- Badges will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <div class="leaderboard-section">
+          <h4>Leaderboard</h4>
+          <div class="leaderboard-grid">
+            <!-- Leaderboard will be populated by JavaScript -->
           </div>
         </div>
       </div>

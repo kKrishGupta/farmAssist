@@ -142,4 +142,3 @@ document.addEventListener("DOMContentLoaded", () => {
     return phoneRegex.test(phone.replace(/\D/g, ""))
   }
 })
-

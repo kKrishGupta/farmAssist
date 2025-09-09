@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault()
     alert("You have been logged out!")
     // redirect to login page if needed
-    // window.location.href = "login.html"
+    // window.location.href = "login.html";
   })
 
   // Chat Modal Functions
@@ -46,9 +46,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const imageResponseSection = document.getElementById("imageResponseSection")
   const imageResponse = document.getElementById("imageResponse")
 
+  // Crop Calendar Modal Elements
+  const cropCalendarModal = document.getElementById("cropCalendarModal")
+  const cropSelect = document.getElementById("cropSelect")
+  const seasonSelect = document.getElementById("seasonSelect")
+  const regionSelect = document.getElementById("regionSelect")
+  const seasonTips = document.getElementById("seasonTips")
+
+  // Market Updates Modal Elements
+  const marketModal = document.getElementById("marketModal")
+  const marketLocation = document.getElementById("marketLocation")
+  const refreshBtn = document.querySelector(".refresh-btn")
+
+  // Community Forum Modal Elements
+  const communityModal = document.getElementById("communityModal")
+  const newPostForm = document.getElementById("newPostForm")
+  const postTitle = document.getElementById("postTitle")
+  const postContent = document.getElementById("postContent")
+  const postCategory = document.getElementById("postCategory")
+  const forumPosts = document.getElementById("forumPosts")
+  const categoryButtons = document.querySelectorAll(".category-btn")
+
   const chatHistoryArray = []
   let hasStartedChat = false
-  let isHistoryVisible = false
+  const isHistoryVisible = false
   let cameraStream = null
 
   function openChatModal(mode) {
@@ -471,41 +492,1002 @@ document.addEventListener("DOMContentLoaded", () => {
     `
   }
 
-  // Close modals when clicking outside
-  window.onclick = (event) => {
-    if (event.target === chatModal) {
-      closeChatModal()
-    }
-    if (event.target === weatherModal) {
-      closeWeatherModal()
-    }
-    if (event.target === imageModal) {
-      closeImageModal()
-    }
-    if (event.target === document.getElementById("voiceModal")) {
-      closeVoiceModal()
+  // Crop Calendar Modal Functions
+  const CROP_CALENDAR_API_BASE = "https://api.example.com" // Replace with actual API endpoint
+  const GEOAPIFY_API_KEY = "7eba5dd3b8dc4e28bf0d65986e96d262"
+
+  // Get stored location data from landing page
+  function getStoredLocationData() {
+    try {
+      const locationData = localStorage.getItem("farmAssistLocation")
+      const language = localStorage.getItem("farmAssistLanguage") || "english"
+      return {
+        location: locationData ? JSON.parse(locationData) : null,
+        language: language,
+      }
+    } catch (error) {
+      console.error("[v0] Error retrieving stored location data:", error)
+      return { location: null, language: "english" }
     }
   }
 
-  // Allow Enter key to send messages
-  document.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && chatModal.style.display === "block") {
-      sendMessage()
+  // Convert location to country code for API
+  async function getCountryCodeFromLocation(location) {
+    if (!location || !location.lat || !location.lng) {
+      return "IN" // Default to India
     }
-  })
 
-  function toggleHistoryList() {
-    isHistoryVisible = !isHistoryVisible
-    const sidebar = document.getElementById("chatSidebar")
-    const chatMain = document.querySelector(".chat-main")
+    try {
+      const response = await fetch(
+        `https://api.geoapify.com/v1/geocode/reverse?lat=${location.lat}&lon=${location.lng}&apiKey=${GEOAPIFY_API_KEY}`,
+      )
+      const data = await response.json()
 
-    if (isHistoryVisible) {
-      sidebar.style.display = "block"
-      chatMain.style.width = "70%"
-    } else {
-      sidebar.style.display = "none"
-      chatMain.style.width = "100%"
+      if (data.features && data.features.length > 0) {
+        const countryCode = data.features[0].properties.country_code?.toUpperCase()
+        return countryCode || "IN"
+      }
+      return "IN"
+    } catch (error) {
+      console.error("[v0] Error getting country code:", error)
+      return "IN"
     }
+  }
+
+  // Enhanced search function with API integration
+  async function searchCrops() {
+    const searchTerm = document.getElementById("cropSearchInput").value.toLowerCase()
+    const searchResults = document.getElementById("searchResults")
+
+    if (searchTerm.length < 2) {
+      searchResults.innerHTML = ""
+      searchResults.style.display = "none"
+      return
+    }
+
+    // Show loading state
+    searchResults.innerHTML = '<div class="search-loading">🔍 Searching crops...</div>'
+    searchResults.style.display = "block"
+
+    try {
+      const { location, language } = getStoredLocationData()
+      const countryCode = await getCountryCodeFromLocation(location)
+
+      const apiResponse = await fetchCropCalendarData(countryCode, searchTerm, language)
+
+      if (apiResponse && apiResponse.length > 0) {
+        displaySearchResults(apiResponse, searchTerm)
+      } else {
+        // Fallback to local data if API fails
+        searchLocalCrops(searchTerm)
+      }
+    } catch (error) {
+      console.error("[v0] API search failed, using local data:", error)
+      searchLocalCrops(searchTerm)
+    }
+  }
+
+  async function fetchCropCalendarData(countryCode, cropQuery, language = "english") {
+    try {
+      const url = `${CROP_CALENDAR_API_BASE}/countries/${countryCode}/cropCalendar?crop=${encodeURIComponent(cropQuery)}&language=${language}`
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error("[v0] Crop calendar API error:", error)
+      return null
+    }
+  }
+
+  function displaySearchResults(apiData, searchTerm) {
+    const searchResults = document.getElementById("searchResults")
+
+    if (!apiData || apiData.length === 0) {
+      searchResults.innerHTML = '<div class="no-results">No crops found for your search.</div>'
+      return
+    }
+
+    const resultsHTML = apiData
+      .map(
+        (crop) => `
+      <div class="search-result-item" onclick="selectCropFromAPI('${crop.id}', '${crop.name}')">
+        <div class="crop-icon">${crop.icon || "🌾"}</div>
+        <div class="crop-info">
+          <h5>${crop.name}</h5>
+          <p>${crop.description || "Click to view calendar"}</p>
+          <small>Duration: ${crop.duration || "N/A"} | Season: ${crop.season || "All seasons"}</small>
+        </div>
+      </div>
+    `,
+      )
+      .join("")
+
+    searchResults.innerHTML = resultsHTML
+  }
+
+  function searchLocalCrops(searchTerm) {
+    const searchResults = document.getElementById("searchResults")
+    const cropSelect = document.getElementById("cropSelect")
+    const matchingCrops = []
+
+    // Search through local crop data
+    for (const [key, crop] of Object.entries(cropData)) {
+      if (crop.name.toLowerCase().includes(searchTerm) || key.toLowerCase().includes(searchTerm)) {
+        matchingCrops.push({ key, ...crop })
+      }
+    }
+
+    if (matchingCrops.length === 0) {
+      searchResults.innerHTML = '<div class="no-results">No crops found. Try a different search term.</div>'
+      return
+    }
+
+    const resultsHTML = matchingCrops
+      .map(
+        (crop) => `
+      <div class="search-result-item" onclick="selectCropFromLocal('${crop.key}')">
+        <div class="crop-icon">🌾</div>
+        <div class="crop-info">
+          <h5>${crop.name}</h5>
+          <p>${crop.overview.description}</p>
+          <small>Duration: ${crop.duration} | Type: ${crop.type}</small>
+        </div>
+      </div>
+    `,
+      )
+      .join("")
+
+    searchResults.innerHTML = resultsHTML
+  }
+
+  function selectCropFromLocal(cropKey) {
+    const searchResults = document.getElementById("searchResults")
+    const cropSearchInput = document.getElementById("cropSearchInput")
+    const cropSelect = document.getElementById("cropSelect")
+
+    if (cropData[cropKey]) {
+      cropSearchInput.value = cropData[cropKey].name
+      cropSelect.value = cropKey
+    }
+
+    searchResults.style.display = "none"
+    updateCropCalendar()
+  }
+
+  function selectCropFromAPI(cropId, cropName) {
+    const searchResults = document.getElementById("searchResults")
+    const cropSearchInput = document.getElementById("cropSearchInput")
+    const cropSelect = document.getElementById("cropSelect")
+
+    cropSearchInput.value = cropName
+
+    // Try to find matching local crop for dropdown
+    const matchingKey = Object.keys(cropData).find((key) =>
+      cropData[key].name.toLowerCase().includes(cropName.toLowerCase()),
+    )
+
+    if (matchingKey) {
+      cropSelect.value = matchingKey
+    }
+
+    searchResults.style.display = "none"
+    loadCropDataFromAPI(cropId)
+  }
+
+  async function loadCropDataFromAPI(cropId) {
+    try {
+      const { location, language } = getStoredLocationData()
+      const countryCode = await getCountryCodeFromLocation(location)
+
+      // Show loading state
+      document.getElementById("timelineContainer").innerHTML = '<div class="loading">Loading crop calendar...</div>'
+
+      const detailedData = await fetchCropCalendarData(countryCode, cropId, language)
+
+      if (detailedData && detailedData.length > 0) {
+        displayAPICalendarData(detailedData[0])
+      } else {
+        throw new Error("No detailed data available")
+      }
+    } catch (error) {
+      console.error("[v0] Failed to load API data:", error)
+      document.getElementById("timelineContainer").innerHTML =
+        '<div class="error">Failed to load crop calendar. Please try again.</div>'
+    }
+  }
+
+  function displayAPICalendarData(cropData) {
+    // Update timeline title
+    document.getElementById("timelineTitle").textContent = `Farming Calendar for ${cropData.name}`
+
+    // Update timeline with API data
+    if (cropData.timeline && cropData.timeline.length > 0) {
+      const timelineHTML = cropData.timeline
+        .map(
+          (stage) => `
+        <div class="timeline-item">
+          <div class="timeline-icon">${stage.icon || "📅"}</div>
+          <div class="timeline-content">
+            <h5>${stage.stage}</h5>
+            <div class="timeline-period">${stage.period}</div>
+            <p>${stage.details}</p>
+          </div>
+        </div>
+      `,
+        )
+        .join("")
+
+      document.getElementById("timelineContainer").innerHTML = timelineHTML
+    }
+
+    // Update other tabs with API data
+    updateAPIOverview(cropData)
+    updateAPICultivation(cropData)
+    updateAPIMarketInfo(cropData)
+  }
+
+  function updateAPIOverview(data) {
+    const overview = document.getElementById("cropOverview")
+    overview.innerHTML = `
+      <div class="overview-grid">
+        <div class="overview-item">
+          <h5>Description</h5>
+          <p>${data.description || "No description available"}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Duration</h5>
+          <p>${data.duration || "N/A"}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Season</h5>
+          <p>${data.season || "All seasons"}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Climate Requirements</h5>
+          <p>${data.climate || "Varies by region"}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Soil Type</h5>
+          <p>${data.soilType || "Well-drained fertile soil"}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Water Requirements</h5>
+          <p>${data.waterRequirement || "Moderate to high"}</p>
+        </div>
+      </div>
+    `
+  }
+
+  function updateAPICultivation(data) {
+    const cultivation = document.getElementById("cultivationInfo")
+    cultivation.innerHTML = `
+      <div class="cultivation-grid">
+        <div class="cultivation-item">
+          <h5>Land Preparation</h5>
+          <p>${data.landPreparation || "Follow standard practices for your region"}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Sowing Method</h5>
+          <p>${data.sowingMethod || "Direct seeding or transplanting"}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Seed Rate</h5>
+          <p>${data.seedRate || "Consult local agricultural officer"}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Fertilizer</h5>
+          <p>${data.fertilizer || "Apply based on soil test results"}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Irrigation</h5>
+          <p>${data.irrigation || "Regular watering as per crop needs"}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Harvesting</h5>
+          <p>${data.harvesting || "Harvest when crop reaches maturity"}</p>
+        </div>
+      </div>
+    `
+  }
+
+  function updateAPIMarketInfo(data) {
+    const { location } = getStoredLocationData()
+    const locationName = location ? location.name : "Your area"
+
+    const marketInfo = document.getElementById("marketInfo")
+    marketInfo.innerHTML = `
+      <div class="market-grid">
+        <div class="market-item">
+          <h5>Current Price Range</h5>
+          <p>${data.priceRange || "₹2000-3000 per quintal"}</p>
+          <small>Prices in ${locationName}</small>
+        </div>
+        <div class="market-item">
+          <h5>Market Demand</h5>
+          <p>${data.marketDemand || "Moderate to High"}</p>
+        </div>
+        <div class="market-item">
+          <h5>Best Selling Season</h5>
+          <p>${data.bestSellingPeriod || "Post harvest season"}</p>
+        </div>
+        <div class="market-item">
+          <h5>Storage Tips</h5>
+          <p>${data.storageTips || "Store in cool, dry place"}</p>
+        </div>
+      </div>
+    `
+  }
+
+  function openCropCalendarModal() {
+    cropCalendarModal.style.display = "block"
+
+    initializeCropCalendarEventListeners()
+
+    // Display user's location context
+    const { location, language } = getStoredLocationData()
+    if (location) {
+      const locationDisplay = document.getElementById("userLocationDisplay")
+      if (locationDisplay) {
+        locationDisplay.textContent = `📍 Showing data for: ${location.name}`
+      }
+    }
+
+    // Initialize with default or previously selected crop
+    updateCropCalendar()
+  }
+
+  const cropData = {
+    rice: {
+      name: "Rice (धान)",
+      type: "Cereal",
+      duration: "120-150 days",
+      seasons: ["kharif", "rabi"],
+      regions: ["all"],
+      overview: {
+        description: "Rice is the staple food crop of India, grown in diverse agro-climatic conditions.",
+        varieties: ["Basmati", "Non-Basmati", "Aromatic", "Fine grain", "Medium grain", "Coarse grain"],
+        soilType: "Clay loam, silty clay loam with pH 5.5-7.0",
+        climate: "Tropical and subtropical with 20-35°C temperature",
+        rainfall: "1000-2000mm annually",
+      },
+      cultivation: {
+        landPrep: "Deep plowing, puddling, leveling for water retention",
+        seedRate: "20-25 kg/hectare for transplanting, 60-80 kg/hectare for direct seeding",
+        spacing: "20cm x 15cm for transplanting",
+        fertilizer: "120:60:40 NPK kg/hectare",
+        irrigation: "Continuous flooding during vegetative stage, intermittent during reproductive stage",
+      },
+      timeline: {
+        kharif: [
+          {
+            stage: "Land Preparation",
+            period: "May-June",
+            icon: "🚜",
+            details: "Deep plowing, puddling, leveling. Apply FYM 10-12 tons/hectare.",
+          },
+          {
+            stage: "Nursery Preparation",
+            period: "June",
+            icon: "🌱",
+            details: "Prepare nursery beds, sow seeds. Maintain 2-3cm water level.",
+          },
+          {
+            stage: "Transplanting",
+            period: "July",
+            icon: "🌾",
+            details: "Transplant 25-30 day old seedlings. Maintain proper spacing.",
+          },
+          {
+            stage: "Vegetative Growth",
+            period: "July-August",
+            icon: "🌿",
+            details: "Apply nitrogen fertilizer. Maintain water level 2-5cm.",
+          },
+          {
+            stage: "Reproductive Phase",
+            period: "September",
+            icon: "🌸",
+            details: "Panicle initiation. Apply potash fertilizer. Control pests.",
+          },
+          {
+            stage: "Grain Filling",
+            period: "October",
+            icon: "🌾",
+            details: "Intermittent irrigation. Monitor for diseases.",
+          },
+          {
+            stage: "Maturity & Harvest",
+            period: "November",
+            icon: "🚛",
+            details: "Harvest when 80% grains turn golden. Proper drying essential.",
+          },
+        ],
+        rabi: [
+          {
+            stage: "Land Preparation",
+            period: "October-November",
+            icon: "🚜",
+            details: "Prepare fields after kharif harvest. Level properly.",
+          },
+          {
+            stage: "Sowing",
+            period: "November-December",
+            icon: "🌱",
+            details: "Direct seeding or transplanting. Use short duration varieties.",
+          },
+          {
+            stage: "Vegetative Growth",
+            period: "December-January",
+            icon: "🌿",
+            details: "Regular irrigation. Apply nitrogen in splits.",
+          },
+          {
+            stage: "Reproductive Phase",
+            period: "February",
+            icon: "🌸",
+            details: "Flowering stage. Ensure adequate water supply.",
+          },
+          {
+            stage: "Grain Filling",
+            period: "March",
+            icon: "🌾",
+            details: "Grain development. Reduce irrigation frequency.",
+          },
+          {
+            stage: "Harvest",
+            period: "April",
+            icon: "🚛",
+            details: "Harvest before summer heat. Proper storage important.",
+          },
+        ],
+      },
+      diseases: [
+        {
+          name: "Rust (Yellow, Brown, Black)",
+          symptoms: "Rust colored pustules",
+          control: "Resistant varieties, fungicide spray",
+        },
+        { name: "Powdery Mildew", symptoms: "White powdery growth", control: "Sulfur dusting, systemic fungicides" },
+        {
+          name: "Loose Smut",
+          symptoms: "Black powdery mass in ears",
+          control: "Seed treatment with systemic fungicides",
+        },
+      ],
+      pests: [
+        { name: "Aphids", symptoms: "Yellowing, stunted growth", control: "Insecticidal soap, predatory insects" },
+        { name: "Termites", symptoms: "Wilting, root damage", control: "Soil treatment, resistant varieties" },
+        { name: "Army Worm", symptoms: "Defoliation", control: "Early detection, insecticide spray" },
+      ],
+      market: {
+        msp: "₹2,275/quintal (2024-25)",
+        avgPrice: "₹2,400-2,800/quintal",
+        demand: "High domestic demand, government procurement",
+        storage: "Moisture content below 12%, pest-free storage",
+      },
+    },
+    tomato: {
+      name: "Tomato (टमाटर)",
+      type: "Vegetable",
+      duration: "90-120 days",
+      seasons: ["kharif", "rabi", "zaid"],
+      regions: ["all"],
+      overview: {
+        description: "Tomato is one of the most important vegetable crops grown worldwide.",
+        varieties: ["Determinate", "Indeterminate", "Cherry tomatoes", "Hybrid varieties"],
+        soilType: "Well-drained sandy loam with pH 6.0-7.0",
+        climate: "Warm season crop, temperature 20-25°C optimal",
+        rainfall: "600-750mm annually",
+      },
+      cultivation: {
+        landPrep: "Deep plowing, raised beds for drainage",
+        seedRate: "300-400g/hectare",
+        spacing: "60cm x 45cm",
+        fertilizer: "120:80:50 NPK kg/hectare",
+        irrigation: "Drip irrigation preferred, avoid water stress",
+      },
+      timeline: {
+        rabi: [
+          {
+            stage: "Nursery Preparation",
+            period: "September",
+            icon: "🌱",
+            details: "Prepare nursery beds, sow seeds in pro-trays.",
+          },
+          {
+            stage: "Land Preparation",
+            period: "October",
+            icon: "🚜",
+            details: "Prepare raised beds, install drip irrigation.",
+          },
+          {
+            stage: "Transplanting",
+            period: "October-November",
+            icon: "🌿",
+            details: "Transplant 4-5 week old seedlings.",
+          },
+          {
+            stage: "Vegetative Growth",
+            period: "November-December",
+            icon: "🌿",
+            details: "Regular irrigation, apply nitrogen fertilizer.",
+          },
+          {
+            stage: "Flowering",
+            period: "December-January",
+            icon: "🌸",
+            details: "Support plants with stakes. Apply phosphorus.",
+          },
+          {
+            stage: "Fruit Development",
+            period: "January-February",
+            icon: "🍅",
+            details: "Regular harvesting begins. Apply potash.",
+          },
+          {
+            stage: "Peak Harvest",
+            period: "February-March",
+            icon: "🚛",
+            details: "Daily harvesting. Proper post-harvest handling.",
+          },
+        ],
+        kharif: [
+          {
+            stage: "Nursery Preparation",
+            period: "May",
+            icon: "🌱",
+            details: "Protected nursery required during monsoon.",
+          },
+          {
+            stage: "Land Preparation",
+            period: "June",
+            icon: "🚜",
+            details: "Ensure proper drainage, raised bed cultivation.",
+          },
+          { stage: "Transplanting", period: "July", icon: "🌿", details: "Use disease-resistant varieties." },
+          {
+            stage: "Vegetative Growth",
+            period: "July-August",
+            icon: "🌿",
+            details: "Disease management critical in humid conditions.",
+          },
+          {
+            stage: "Flowering",
+            period: "August-September",
+            icon: "🌸",
+            details: "Fungicide spray for disease prevention.",
+          },
+          {
+            stage: "Fruit Development",
+            period: "September-October",
+            icon: "🍅",
+            details: "Monitor for fruit rot diseases.",
+          },
+          { stage: "Harvest", period: "October-November", icon: "🚛", details: "Harvest before winter sets in." },
+        ],
+      },
+      diseases: [
+        {
+          name: "Early Blight",
+          symptoms: "Dark spots with concentric rings",
+          control: "Fungicide spray, crop rotation",
+        },
+        { name: "Late Blight", symptoms: "Water-soaked lesions", control: "Copper fungicides, resistant varieties" },
+        { name: "Bacterial Wilt", symptoms: "Sudden wilting", control: "Soil solarization, resistant varieties" },
+      ],
+      pests: [
+        { name: "Fruit Borer", symptoms: "Holes in fruits", control: "Pheromone traps, Bt spray" },
+        { name: "Whitefly", symptoms: "Yellowing, virus transmission", control: "Yellow sticky traps, insecticides" },
+        { name: "Aphids", symptoms: "Curling leaves", control: "Neem oil, predatory insects" },
+      ],
+      market: {
+        msp: "Not applicable",
+        avgPrice: "₹1,500-4,000/quintal (seasonal variation)",
+        demand: "High demand year-round, processing industry",
+        storage: "Short shelf life, cold storage for extended storage",
+      },
+    },
+    // Add more crops with similar detailed structure...
+  }
+
+  async function performCropSearch() {
+    const searchTerm = document.getElementById("cropSearchInput").value.toLowerCase()
+    const searchResults = document.getElementById("searchResults")
+
+    if (searchTerm.length < 2) {
+      searchResults.innerHTML = ""
+      searchResults.style.display = "none"
+      return
+    }
+
+    // Show loading state
+    searchResults.innerHTML = '<div class="search-loading">🔍 Searching crops...</div>'
+    searchResults.style.display = "block"
+
+    try {
+      const { location, language } = getStoredLocationData()
+      const countryCode = await getCountryCodeFromLocation(location)
+
+      const apiResponse = await fetchCropCalendarData(countryCode, searchTerm, language)
+
+      if (apiResponse && apiResponse.length > 0) {
+        displaySearchResults(apiResponse, searchTerm)
+      } else {
+        // Fallback to local data if API fails
+        searchLocalCrops(searchTerm)
+      }
+    } catch (error) {
+      console.error("[v0] API search failed, using local data:", error)
+      searchLocalCrops(searchTerm)
+    }
+  }
+
+  function initializeCropCalendarEventListeners() {
+    // Search input event listener
+    const cropSearchInput = document.getElementById("cropSearchInput")
+    if (cropSearchInput) {
+      cropSearchInput.addEventListener("input", searchCrops)
+      cropSearchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault()
+          searchCrops()
+        }
+      })
+    }
+
+    // Dropdown change event listeners
+    if (cropSelect) {
+      cropSelect.addEventListener("change", function () {
+        const selectedCrop = this.value
+        const cropName = cropData[selectedCrop]?.name || selectedCrop
+
+        // Sync search input with dropdown selection
+        if (cropSearchInput) {
+          cropSearchInput.value = cropName
+        }
+
+        // Hide search results
+        const searchResults = document.getElementById("searchResults")
+        if (searchResults) {
+          searchResults.style.display = "none"
+        }
+
+        // Update calendar data
+        updateCropCalendar()
+      })
+    }
+
+    if (seasonSelect) {
+      seasonSelect.addEventListener("change", updateCropCalendar)
+    }
+
+    if (regionSelect) {
+      regionSelect.addEventListener("change", updateCropCalendar)
+    }
+  }
+
+  function updateCropCalendar() {
+    const crop = cropSelect.value
+    const season = seasonSelect.value
+    const region = regionSelect.value
+
+    const data = cropData[crop]
+    if (!data) {
+      console.log("[v0] Crop not found in local data:", crop)
+      return
+    }
+
+    const seasonName = season.charAt(0).toUpperCase() + season.slice(1)
+    document.getElementById("timelineTitle").textContent = `Farming Timeline for ${data.name} - ${seasonName} Season`
+
+    // Update timeline
+    updateTimeline(data, season)
+
+    // Update crop details tabs
+    updateCropOverview(data)
+    updateCultivationInfo(data)
+    updateDiseasesInfo(data)
+    updateMarketInfo(data)
+
+    // Update season tips
+    updateSeasonTips(crop, season, region)
+  }
+
+  function updateTimeline(data, season) {
+    const container = document.getElementById("timelineContainer")
+    const timeline = data.timeline[season] || data.timeline.kharif || []
+
+    container.innerHTML = timeline
+      .map(
+        (stage) => `
+      <div class="timeline-item">
+        <div class="timeline-icon">${stage.icon}</div>
+        <div class="timeline-content">
+          <h5>${stage.stage}</h5>
+          <div class="timeline-period">${stage.period}</div>
+          <p>${stage.details}</p>
+        </div>
+      </div>
+    `,
+      )
+      .join("")
+  }
+
+  function updateCropOverview(data) {
+    const overview = document.getElementById("cropOverview")
+    overview.innerHTML = `
+      <div class="overview-grid">
+        <div class="overview-item">
+          <h5>Description</h5>
+          <p>${data.overview.description}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Duration</h5>
+          <p>${data.duration}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Soil Type</h5>
+          <p>${data.overview.soilType}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Climate</h5>
+          <p>${data.overview.climate}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Rainfall</h5>
+          <p>${data.overview.rainfall}</p>
+        </div>
+        <div class="overview-item">
+          <h5>Varieties</h5>
+          <ul>${data.overview.varieties.map((v) => `<li>${v}</li>`).join("")}</ul>
+        </div>
+      </div>
+    `
+  }
+
+  function updateCultivationInfo(data) {
+    const cultivation = document.getElementById("cultivationInfo")
+    cultivation.innerHTML = `
+      <div class="cultivation-grid">
+        <div class="cultivation-item">
+          <h5>Land Preparation</h5>
+          <p>${data.cultivation.landPrep}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Seed Rate</h5>
+          <p>${data.cultivation.seedRate}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Spacing</h5>
+          <p>${data.cultivation.spacing}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Fertilizer</h5>
+          <p>${data.cultivation.fertilizer}</p>
+        </div>
+        <div class="cultivation-item">
+          <h5>Irrigation</h5>
+          <p>${data.cultivation.irrigation}</p>
+        </div>
+      </div>
+    `
+  }
+
+  function updateDiseasesInfo(data) {
+    const diseases = document.getElementById("diseasesInfo")
+    diseases.innerHTML = `
+      <div class="diseases-section">
+        <h5>Common Diseases</h5>
+        <div class="diseases-list">
+          ${data.diseases
+            .map(
+              (disease) => `
+            <div class="disease-item">
+              <h6>${disease.name}</h6>
+              <p><strong>Symptoms:</strong> ${disease.symptoms}</p>
+              <p><strong>Control:</strong> ${disease.control}</p>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+        
+        <h5>Common Pests</h5>
+        <div class="pests-list">
+          ${data.pests
+            .map(
+              (pest) => `
+            <div class="pest-item">
+              <h6>${pest.name}</h6>
+              <p><strong>Symptoms:</strong> ${pest.symptoms}</p>
+              <p><strong>Control:</strong> ${pest.control}</p>
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+      </div>
+    `
+  }
+
+  function updateMarketInfo(data) {
+    const market = document.getElementById("marketInfo")
+    market.innerHTML = `
+      <div class="market-grid">
+        <div class="market-item">
+          <h5>MSP (Minimum Support Price)</h5>
+          <p>${data.market.msp}</p>
+        </div>
+        <div class="market-item">
+          <h5>Average Market Price</h5>
+          <p>${data.market.avgPrice}</p>
+        </div>
+        <div class="market-item">
+          <h5>Market Demand</h5>
+          <p>${data.market.demand}</p>
+        </div>
+        <div class="market-item">
+          <h5>Storage Requirements</h5>
+          <p>${data.market.storage}</p>
+        </div>
+      </div>
+    `
+  }
+
+  function updateSeasonTips(crop, season, region) {
+    // Enhanced tips based on crop, season, and region
+    const tips = {
+      rice: {
+        kharif: {
+          north: [
+            "• Transplant during July for optimal growth",
+            "• Maintain 2-5cm water level",
+            "• Watch for blast disease in humid conditions",
+          ],
+          south: [
+            "• Early variety planting in June",
+            "• Manage water efficiently during monsoon",
+            "• Control brown plant hopper",
+          ],
+        },
+      },
+      // Add more comprehensive tips...
+    }
+
+    const currentTips = tips[crop]?.[season]?.[region] ||
+      tips[crop]?.[season]?.north || [
+        "• Follow recommended practices for your region",
+        "• Consult local agricultural extension officer",
+        "• Monitor weather conditions regularly",
+      ]
+
+    document.getElementById("seasonTips").innerHTML = currentTips.map((tip) => `<p>${tip}</p>`).join("")
+  }
+
+  // Market Updates Modal Functions
+  function openMarketModal() {
+    marketModal.style.display = "block"
+    updateMarketPrices()
+  }
+
+  function closeMarketModal() {
+    marketModal.style.display = "none"
+  }
+
+  function updateMarketPrices() {
+    // Simulate price updates based on location
+    const location = marketLocation.value
+    console.log(`[v0] Updating market prices for ${location}`)
+
+    // Add some visual feedback
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...'
+
+    setTimeout(() => {
+      refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh'
+      // Prices would be updated here in a real application
+    }, 1000)
+  }
+
+  function refreshMarketData() {
+    updateMarketPrices()
+  }
+
+  // Community Forum Modal Functions
+  function openCommunityModal() {
+    communityModal.style.display = "block"
+  }
+
+  function closeCommunityModal() {
+    communityModal.style.display = "none"
+    // Hide new post form if open
+    newPostForm.style.display = "none"
+  }
+
+  function showNewPostForm() {
+    newPostForm.style.display = "block"
+    postTitle.focus()
+  }
+
+  function cancelPost() {
+    newPostForm.style.display = "none"
+    // Clear form
+    postTitle.value = ""
+    postContent.value = ""
+  }
+
+  function submitPost() {
+    const title = postTitle.value.trim()
+    const content = postContent.value.trim()
+    const category = postCategory.value
+
+    if (!title || !content) {
+      alert("Please fill in both title and content")
+      return
+    }
+
+    // Create new post element
+    const newPost = document.createElement("div")
+    newPost.className = "forum-post"
+    newPost.setAttribute("data-category", category)
+
+    newPost.innerHTML = `
+      <div class="post-header">
+        <div class="user-info">
+          <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+          <div>
+            <div class="username">Ramu (You)</div>
+            <div class="post-time">Just now</div>
+          </div>
+        </div>
+        <span class="post-category ${category}">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+      </div>
+      <div class="post-content">
+        <h4>${title}</h4>
+        <p>${content}</p>
+      </div>
+      <div class="post-actions">
+        <button class="action-btn"><i class="fas fa-thumbs-up"></i> 0</button>
+        <button class="action-btn"><i class="fas fa-comment"></i> 0 replies</button>
+        <button class="action-btn"><i class="fas fa-share"></i> Share</button>
+      </div>
+    `
+
+    // Add to top of posts
+    forumPosts.insertBefore(newPost, forumPosts.firstChild)
+
+    // Clear and hide form
+    cancelPost()
+
+    alert("Post created successfully!")
+  }
+
+  function filterPosts(category) {
+    const posts = document.querySelectorAll(".forum-post")
+    const buttons = document.querySelectorAll(".category-btn")
+
+    // Update active button
+    buttons.forEach((btn) => btn.classList.remove("active"))
+    event.target.classList.add("active")
+
+    // Filter posts
+    posts.forEach((post) => {
+      if (category === "all" || post.getAttribute("data-category") === category) {
+        post.style.display = "block"
+      } else {
+        post.style.display = "none"
+      }
+    })
   }
 
   // Voice Recognition Variables and Functions
@@ -620,6 +1602,401 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1500)
   }
 
+  function openLearningHub() {
+    const learningHubHTML = `
+      <div id="learningHubModal" class="modal">
+        <div class="modal-content learning-hub-content">
+          <span class="close" onclick="closeLearningHub()">&times;</span>
+          <h2>🌱 Learning Hub</h2>
+          <p>Expand your farming knowledge with these topics:</p>
+          <div class="learning-topics">
+            <div class="topic-card" onclick="openTopic('soil-management')">
+              <h3>🌱 Soil Management</h3>
+              <p>Learn about soil health, pH levels, and nutrient management</p>
+            </div>
+            <div class="topic-card" onclick="openTopic('crop-rotation')">
+              <h3>🔄 Crop Rotation</h3>
+              <p>Master the art of rotating crops for better yields</p>
+            </div>
+            <div class="topic-card" onclick="openTopic('pest-control')">
+              <h3>🐛 Pest Control</h3>
+              <p>Natural and effective pest management techniques</p>
+            </div>
+            <div class="topic-card" onclick="openTopic('irrigation')">
+              <h3>💧 Irrigation Systems</h3>
+              <p>Efficient water management and irrigation methods</p>
+            </div>
+            <div class="topic-card" onclick="openTopic('organic-farming')">
+              <h3>🌿 Organic Farming</h3>
+              <p>Sustainable and chemical-free farming practices</p>
+            </div>
+            <div class="topic-card" onclick="openTopic('harvest-storage')">
+              <h3>📦 Harvest & Storage</h3>
+              <p>Proper harvesting techniques and storage methods</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+
+    document.body.insertAdjacentHTML("beforeend", learningHubHTML)
+    document.getElementById("learningHubModal").style.display = "block"
+  }
+
+  function closeLearningHub() {
+    const modal = document.getElementById("learningHubModal")
+    if (modal) {
+      modal.remove()
+    }
+  }
+
+  function openRewardsPopup() {
+    const rewardsHTML = `
+      <div id="rewardsModal" class="modal">
+        <div class="modal-content rewards-content">
+          <span class="close" onclick="closeRewardsPopup()">&times;</span>
+          <h2>🎁 Rewards & Coins</h2>
+          <div class="rewards-info">
+            <h3>💰 Earn Money by Referring Friends!</h3>
+            <p>Share FarmAssist with your fellow farmers and earn rewards:</p>
+            <ul>
+              <li>🌟 ₹50 for each successful referral</li>
+              <li>🏆 Bonus ₹100 when you refer 5 friends</li>
+              <li>💎 Premium features unlock at 10 referrals</li>
+            </ul>
+            <div class="referral-code">
+              <p><strong>Your Referral Code:</strong> <span class="code">FARM${Math.floor(Math.random() * 10000)}</span></p>
+            </div>
+            <div class="share-buttons">
+              <button onclick="shareReferral('whatsapp')" class="share-btn whatsapp">Share on WhatsApp</button>
+              <button onclick="shareReferral('copy')" class="share-btn copy">Copy Link</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+
+    document.body.insertAdjacentHTML("beforeend", rewardsHTML)
+    document.getElementById("rewardsModal").style.display = "block"
+  }
+
+  function closeRewardsPopup() {
+    const modal = document.getElementById("rewardsModal")
+    if (modal) {
+      modal.remove()
+    }
+  }
+
+  function openTopic(topicId) {
+    alert(`Opening ${topicId.replace("-", " ")} learning module...`)
+    // Here you would typically load the specific learning content
+  }
+
+  function shareReferral(platform) {
+    const referralCode = document.querySelector(".code").textContent
+    const message = `Join FarmAssist and get expert farming advice! Use my referral code: ${referralCode} and we both earn rewards! Download: https://farmassist.com`
+
+    if (platform === "whatsapp") {
+      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank")
+    } else if (platform === "copy") {
+      navigator.clipboard.writeText(message).then(() => {
+        alert("Referral link copied to clipboard!")
+      })
+    }
+  }
+
+  function closeLoginPopup() {
+    // Function for closing login popup if it exists
+    console.log("Login popup closed")
+  }
+
+  function closeLoginForm() {
+    // Function for closing login form if it exists
+    console.log("Login form closed")
+  }
+
+  function closeSignupForm() {
+    // Function for closing signup form if it exists
+    console.log("Signup form closed")
+  }
+
+  function closeCropCalendarModal() {
+    cropCalendarModal.style.display = "none"
+  }
+
+  function showMarketTab(tabName) {
+    // Hide all market tab contents
+    document.querySelectorAll(".market-tab-content").forEach((tab) => {
+      tab.classList.remove("active")
+    })
+
+    // Remove active class from all market tab buttons
+    document.querySelectorAll(".market-tabs .tab-btn").forEach((btn) => {
+      btn.classList.remove("active")
+    })
+
+    // Show selected tab content
+    const targetTab = document.getElementById(tabName + "Tab")
+    if (targetTab) {
+      targetTab.classList.add("active")
+    }
+
+    // Add active class to clicked button
+    event.target.classList.add("active")
+
+    // Load specific data based on tab
+    if (tabName === "prices") {
+      loadPriceData()
+    } else if (tabName === "trends") {
+      loadTrendData()
+    } else if (tabName === "analytics") {
+      loadAnalyticsData()
+    } else if (tabName === "alerts") {
+      loadAlertsData()
+    }
+  }
+
+  function loadPriceData() {
+    const priceTableBody = document.getElementById("priceTableBody")
+    if (priceTableBody) {
+      const sampleData = [
+        { crop: "Rice", price: "₹2,450", change: "+2.5%", min: "₹2,200", max: "₹2,600", volume: "1,250 tons" },
+        { crop: "Wheat", price: "₹2,125", change: "-1.2%", min: "₹2,000", max: "₹2,300", volume: "980 tons" },
+        { crop: "Tomato", price: "₹3,200", change: "+15.8%", min: "₹2,800", max: "₹3,500", volume: "450 tons" },
+        { crop: "Onion", price: "₹1,800", change: "+8.3%", min: "₹1,600", max: "₹2,000", volume: "720 tons" },
+        { crop: "Potato", price: "₹1,200", change: "-3.1%", min: "₹1,100", max: "₹1,400", volume: "890 tons" },
+      ]
+
+      priceTableBody.innerHTML = sampleData
+        .map(
+          (item) => `
+        <tr>
+          <td>${item.crop}</td>
+          <td>${item.price}</td>
+          <td class="price-change ${item.change.startsWith("+") ? "positive" : "negative"}">${item.change}</td>
+          <td>${item.min}</td>
+          <td>${item.max}</td>
+          <td>${item.volume}</td>
+          <td><button onclick="setAlert('${item.crop}')">Set Alert</button></td>
+        </tr>
+      `,
+        )
+        .join("")
+    }
+  }
+
+  function loadTrendData() {
+    console.log("Loading trend data...")
+  }
+
+  function loadAnalyticsData() {
+    console.log("Loading analytics data...")
+  }
+
+  function loadAlertsData() {
+    console.log("Loading alerts data...")
+  }
+
+  function setAlert(crop) {
+    const alertCrop = crop || document.getElementById("alertCrop")?.value
+    const alertPrice = document.getElementById("alertPrice")?.value
+    const alertType = document.getElementById("alertType")?.value
+
+    if (alertCrop && alertPrice && alertType) {
+      alert(`Price alert set for ${alertCrop} when price goes ${alertType} ₹${alertPrice}`)
+
+      // Add to active alerts
+      const activeAlerts = document.getElementById("activeAlerts")
+      if (activeAlerts) {
+        const alertDiv = document.createElement("div")
+        alertDiv.className = "alert-item"
+        alertDiv.innerHTML = `
+          <span>${alertCrop} - ${alertType} ₹${alertPrice}</span>
+          <button onclick="removeAlert(this)">Remove</button>
+        `
+        activeAlerts.appendChild(alertDiv)
+      }
+    } else {
+      alert("Please fill in all alert details")
+    }
+  }
+
+  function removeAlert(button) {
+    button.parentElement.remove()
+  }
+
+  function filterMarketData() {
+    const cropFilter = document.getElementById("cropFilter")?.value
+    const timeFilter = document.getElementById("timeFilter")?.value
+    console.log(`Filtering market data by crop: ${cropFilter}, time: ${timeFilter}`)
+    loadPriceData() // Reload data with filters
+  }
+
+  function searchMarketData() {
+    const searchTerm = document.getElementById("marketSearch")?.value
+    console.log(`Searching market data for: ${searchTerm}`)
+    loadPriceData() // Reload data with search
+  }
+
+  function exportMarketData() {
+    alert("Market data exported successfully!")
+  }
+
+  function nextPage() {
+    const pageInfo = document.getElementById("pageInfo")
+    if (pageInfo) {
+      // Simple pagination simulation
+      const currentPage = Number.parseInt(pageInfo.textContent.match(/\d+/)[0])
+      pageInfo.textContent = `Page ${currentPage + 1} of 50`
+    }
+  }
+
+  function previousPage() {
+    const pageInfo = document.getElementById("pageInfo")
+    if (pageInfo) {
+      // Simple pagination simulation
+      const currentPage = Number.parseInt(pageInfo.textContent.match(/\d+/)[0])
+      if (currentPage > 1) {
+        pageInfo.textContent = `Page ${currentPage - 1} of 50`
+      }
+    }
+  }
+
+  function searchPosts() {
+    const searchTerm = document.getElementById("forumSearch")?.value.toLowerCase()
+    const posts = document.querySelectorAll(".forum-post")
+
+    posts.forEach((post) => {
+      const title = post.querySelector("h4")?.textContent.toLowerCase() || ""
+      const content = post.querySelector("p")?.textContent.toLowerCase() || ""
+
+      if (title.includes(searchTerm) || content.includes(searchTerm)) {
+        post.style.display = "block"
+      } else {
+        post.style.display = "none"
+      }
+    })
+  }
+
+  function loadMorePosts() {
+    // Simulate loading more posts
+    const forumPosts = document.getElementById("forumPosts")
+    if (forumPosts) {
+      const newPost = document.createElement("div")
+      newPost.className = "forum-post"
+      newPost.setAttribute("data-category", "tips")
+      newPost.innerHTML = `
+        <div class="post-header">
+          <div class="user-info">
+            <img src="/placeholder.svg?height=40&width=40" alt="User" class="user-avatar">
+            <div>
+              <div class="username">New Farmer</div>
+              <div class="post-time">Just loaded</div>
+            </div>
+          </div>
+          <span class="post-category tips">Tip</span>
+        </div>
+        <div class="post-content">
+          <h4>New farming tip loaded</h4>
+          <p>This is a dynamically loaded post to demonstrate the load more functionality.</p>
+        </div>
+        <div class="post-actions">
+          <button class="action-btn"><i class="fas fa-thumbs-up"></i> 0</button>
+          <button class="action-btn"><i class="fas fa-comment"></i> 0 replies</button>
+          <button class="action-btn"><i class="fas fa-share"></i> Share</button>
+        </div>
+      `
+      forumPosts.appendChild(newPost)
+    }
+  }
+
+  // Close modals when clicking outside
+  window.onclick = (event) => {
+    const chatModal = document.getElementById("chatModal")
+    const loginModal = document.getElementById("loginModal")
+    const learningModal = document.getElementById("learningHubModal")
+    const rewardsModal = document.getElementById("rewardsModal")
+    const loginFormModal = document.getElementById("loginFormModal")
+    const signupFormModal = document.getElementById("signupFormModal")
+
+    if (event.target === chatModal) {
+      closeChatModal()
+    }
+    if (event.target === loginModal) {
+      closeLoginPopup()
+    }
+    if (event.target === learningModal) {
+      closeLearningHub()
+    }
+    if (event.target === rewardsModal) {
+      closeRewardsPopup()
+    }
+    if (event.target === loginFormModal) {
+      closeLoginForm()
+    }
+    if (event.target === signupFormModal) {
+      closeSignupForm()
+    }
+    if (event.target === weatherModal) {
+      closeWeatherModal()
+    }
+    if (event.target === imageModal) {
+      closeImageModal()
+    }
+    if (event.target === document.getElementById("voiceModal")) {
+      closeVoiceModal()
+    }
+    if (event.target === cropCalendarModal) {
+      closeCropCalendarModal()
+    }
+    if (event.target === marketModal) {
+      closeMarketModal()
+    }
+    if (event.target === communityModal) {
+      closeCommunityModal()
+    }
+  }
+
+  // Allow Enter key to send messages
+  document.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && chatModal.style.display === "block") {
+      sendMessage()
+    }
+  })
+
+  function toggleHistoryList() {
+    isHistoryVisible = !isHistoryVisible
+    const sidebar = document.getElementById("chatSidebar")
+    const chatMain = document.querySelector(".chat-main")
+
+    if (isHistoryVisible) {
+      sidebar.style.display = "block"
+      chatMain.style.width = "70%"
+    } else {
+      sidebar.style.display = "none"
+      chatMain.style.width = "100%"
+    }
+  }
+
+  // Tab functionality for crop details
+  function showTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll(".tab-content").forEach((tab) => {
+      tab.classList.remove("active")
+    })
+
+    // Remove active class from all tab buttons
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.classList.remove("active")
+    })
+
+    // Show selected tab content
+    document.getElementById(tabName + "Tab").classList.add("active")
+
+    // Add active class to clicked button
+    event.target.classList.add("active")
+  }
+
   // Make functions globally available
   window.openChatModal = openChatModal
   window.closeChatModal = closeChatModal
@@ -643,4 +2020,35 @@ document.addEventListener("DOMContentLoaded", () => {
   window.openVoiceModal = openVoiceModal
   window.closeVoiceModal = closeVoiceModal
   window.toggleRecording = toggleRecording
+  window.openCropCalendarModal = openCropCalendarModal
+  window.closeCropCalendarModal = closeCropCalendarModal
+  window.updateCropCalendar = updateCropCalendar
+  window.openMarketModal = openMarketModal
+  window.closeMarketModal = closeMarketModal
+  window.updateMarketPrices = updateMarketPrices
+  window.refreshMarketData = refreshMarketData
+  window.openCommunityModal = openCommunityModal
+  window.closeCommunityModal = closeCommunityModal
+  window.showNewPostForm = showNewPostForm
+  window.cancelPost = cancelPost
+  window.submitPost = submitPost
+  window.filterPosts = filterPosts
+  window.showTab = showTab
+  window.performCropSearch = performCropSearch
+  window.openLearningHub = openLearningHub
+  window.closeLearningHub = closeLearningHub
+  window.openRewardsPopup = openRewardsPopup
+  window.closeRewardsPopup = closeRewardsPopup
+  window.openTopic = openTopic
+  window.shareReferral = shareReferral
+  window.showMarketTab = showMarketTab
+  window.setAlert = setAlert
+  window.removeAlert = removeAlert
+  window.filterMarketData = filterMarketData
+  window.searchMarketData = searchMarketData
+  window.exportMarketData = exportMarketData
+  window.nextPage = nextPage
+  window.previousPage = previousPage
+  window.searchPosts = searchPosts
+  window.loadMorePosts = loadMorePosts
 })
